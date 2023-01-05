@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import random
 import math 
+from typing import Optional, Any, Union, Callable
 import copy
 import time
 from typing import Tuple 
@@ -16,7 +17,11 @@ import torch
 from torch import nn, Tensor 
 import torch.nn.functional as F 
 from torch.nn import TransformerEncoder, TransformerEncoderLayer 
+from torchvision.models.feature_extraction import create_feature_extractor
 from tqdm import tqdm
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+import seaborn as sns
 
 mult_factor = 1e+2
 
@@ -91,6 +96,21 @@ def process_ds(input_pkl, max_len):
 
     return seq_vecs_train, seq_vecs_val, seq_vecs_test, counts_arrays_train, counts_arrays_val, counts_arrays_test, mask_vecs_train, mask_vecs_val, mask_vecs_test
 
+attn_weights_storage = []
+
+class TransformerEncoderLayerwWeights(TransformerEncoderLayer):
+    def _sa_block(self, x: Tensor,
+                  attn_mask: Optional[Tensor], key_padding_mask: Optional[Tensor]) -> Tensor:
+        out_tuple = self.self_attn(x, x, x,
+                           attn_mask=attn_mask,
+                           key_padding_mask=key_padding_mask,
+                           need_weights=True)
+        x = out_tuple[0]
+        attn_wts = out_tuple[1]
+        # print(x, attn_wts)
+        attn_weights_storage.append(attn_wts)
+        return self.dropout1(x)
+
 class TransformerModel(nn.Module):
     def __init__(self, num_feats: int, d_model: int, nhead: int, d_hid: int,
                 nlayers: int, dropout: float = 0.5):
@@ -103,7 +123,7 @@ class TransformerModel(nn.Module):
         nhead: num of multihead attention models
         d_hid: dimension of the FFN
         '''
-        encoder_layers = TransformerEncoderLayer(d_model, nhead, d_hid, dropout)
+        encoder_layers = TransformerEncoderLayerwWeights(d_model, nhead, d_hid, dropout)
 
         # Transformer Encoder Model: made up on multiple encoder layers
         self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)
@@ -126,12 +146,13 @@ class TransformerModel(nn.Module):
         src = self.encoder(src) * math.sqrt(self.d_model)
         # print(src.shape)
         src = self.pos_encoder(src)
-        output = self.relu(self.transformer_encoder(src, src_mask))
-        # print(output.shape)
-        output = self.decoder(output)
+        # print(src)
+        output = self.transformer_encoder(src, src_mask)
+        # print(output)
+        output = self.decoder(self.relu(output))
         # print(output.shape)
  
-        return output 
+        return output
 
 def generate_square_subsequent_mask(sz: int) -> Tensor:
     return torch.triu(torch.ones(sz, sz) * float('-inf'), diagonal=1)
@@ -153,18 +174,44 @@ class PositionalEncoding(nn.Module):
         x = x + self.pe[:x.size(0)]
         return self.dropout(x)
 
+def plot_attn_matrix(attn_mat, filename):
+    im = plt.matshow(attn_mat, cmap="Greys")
+    plt.savefig(filename)
+
+def get_nt_influence_measure(attn_mat, thresh):
+    list_influence = []
+    for i in range(len(attn_mat)):
+        for j in range(len(attn_mat)):
+            if np.sum(attn_mat[i][i-j:i+j]) >= thresh:
+                num_bps = 0
+                if i-j >= 0:
+                    num_bps += j
+                else:
+                    num_bps += i
+                
+                if i+j >= len(attn_mat):
+                    num_bps += len(attn_mat) - i 
+                else:
+                    num_bps += j
+
+                list_influence.append(num_bps)
+                break 
+    # print(list_influence)
+    return np.mean(list_influence)
+
 if __name__ == '__main__':
     device = torch.device('cpu')
     print("Device: ", device)
     num_feats = 5
-    emsize = 200
-    d_hid = 200 
-    nlayers = 2
+    emsize = 512
+    d_hid = 2048
+    nlayers = 6
     nhead = 2
     dropout = 0.2 
     model = TransformerModel(num_feats, emsize, nhead, d_hid, nlayers, dropout).to(device)
     model = model.to(torch.double)
-    model.load_state_dict(torch.load('models/tf_simple-perHu_noPad_withMASK.pt'))
+    model_filename = 'models/TF_Model_2.pt'
+    model.load_state_dict(torch.load(model_filename))
     model.eval()
     criterion = nn.MSELoss()
 
@@ -186,19 +233,30 @@ if __name__ == '__main__':
     with torch.no_grad():
         seq_len = len(seq_vecs_val[random_sample_num])
         src_mask = generate_square_subsequent_mask(seq_len).to(device)
-        y_pred = torch.flatten(model(torch.from_numpy(seq_vecs_val[random_sample_num]).double(), src_mask))
+        y_pred = model(torch.from_numpy(seq_vecs_val[random_sample_num]).double(), src_mask)
+        y_pred = torch.flatten(y_pred)
         y_true = torch.flatten(torch.from_numpy(counts_arrays_val[random_sample_num]))
         mask_vec_sample = torch.flatten(torch.from_numpy(mask_vecs_val[random_sample_num]))
+
+        y_pred = torch.mul(y_pred, mask_vec_sample)
+        y_true = torch.mul(y_true, mask_vec_sample)
         loss = criterion(y_pred, y_true)
 
-        y_pred = torch.mul(y_pred, mask_vec_sample).numpy()
-        y_true = torch.mul(y_true, mask_vec_sample).numpy()
+        y_pred = y_pred.numpy()
+        y_true = y_true.numpy()
         mask_vec_sample = mask_vec_sample.numpy()
 
-        print(y_pred.shape)
-        print(y_true.shape)
-        for j in range(len(y_pred)):
-            print(y_pred[j], y_true[j], mask_vec_sample[j])
+        # print(y_pred.shape)
+        # print(y_true.shape)
 
-        print(loss)
-        
+        for x in range(nlayers):
+            attn_map = attn_weights_storage[x].numpy()
+            plot_attn_matrix(attn_map[:50,:50], f'images/TF_Model_2_ATTN_Layer_{x:1d}.jpg')
+            thresh = 0.25
+            nt_mean_distance_influence = get_nt_influence_measure(attn_map, thresh)
+
+            print(f'Attention Layer {x+1:1d}: the mean influence (summing to {thresh*100:2.1f}%) is {nt_mean_distance_influence:2.2f} bps')
+
+
+
+

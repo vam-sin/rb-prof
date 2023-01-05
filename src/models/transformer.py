@@ -19,21 +19,60 @@ np.random.seed(0)
 
 mult_factor = 1e+2
 
-def convertOH(seq, max_len):
+'''
+'-' is for those beginning amino acids for which the codon cant be defined. 
+'''
+
+codon_table = {
+        'ATA':1, 'ATC':2, 'ATT':3, 'ATG':4,
+        'ACA':5, 'ACC':6, 'ACG':7, 'ACT':8,
+        'AAC':9, 'AAT':10, 'AAA':11, 'AAG':12,
+        'AGC':13, 'AGT':14, 'AGA':15, 'AGG':16,                
+        'CTA':17, 'CTC':18, 'CTG':19, 'CTT':20,
+        'CCA':21, 'CCC':22, 'CCG':23, 'CCT':24,
+        'CAC':25, 'CAT':26, 'CAA':27, 'CAG':28,
+        'CGA':29, 'CGC':30, 'CGG':31, 'CGT':32,
+        'GTA':33, 'GTC':34, 'GTG':35, 'GTT':36,
+        'GCA':37, 'GCC':38, 'GCG':39, 'GCT':40,
+        'GAC':41, 'GAT':42, 'GAA':43, 'GAG':44,
+        'GGA':45, 'GGC':46, 'GGG':47, 'GGT':48,
+        'TCA':49, 'TCC':50, 'TCG':51, 'TCT':52,
+        'TTC':53, 'TTT':54, 'TTA':55, 'TTG':56,
+        'TAC':57, 'TAT':58, 'TAA':59, 'TAG':60,
+        'TGC':61, 'TGT':62, 'TGA':63, 'TGG':64,
+        '-': 65, 'NNG': 66, 'NGG': 67, 'NNT': 68,
+        'NTG': 69, 'NAC': 70, 'NNC': 71, 'NCC': 72,
+        'NGC': 73, 'NCA': 74, 'NGA': 75
+    }
+
+def convertOH(seq):
     '''
     converts the mRNA sequence into a one-hot encoding 
-    P is sequence padding which is [0,0,0,0,0]
     '''
-    RNA_dict = {'A': [1,0,0,0,0], 'T': [0,1,0,0,0], 'G': [0,0,1,0,0], 'C': [0,0,0,1,0], 'N': [0,0,0,0,1],'P':[0,0,0,0,0]}
+    RNA_dict = {'A': [1,0,0,0,0], 'T': [0,1,0,0,0], 'G': [0,0,1,0,0], 'C': [0,0,0,1,0], 'N': [0,0,0,0,1]}
     OH_vec = []
+    codon_vec = []
     for i in seq:
         OH_vec.append(RNA_dict[i])
+    
+    for i in range(len(seq)):
+        # print(i)
+        codon_seq = seq[i-2:i+1]
+        vec_add = np.zeros((len(codon_table)))
+        if len(codon_seq) < 3:
+            vec_add[codon_table['-']-1] = 1
+        else:
+            vec_add[codon_table[codon_seq]-1] = 1
+        codon_vec.append(vec_add)
+    
     # for j in range(max_len - len(seq)):
     #     OH_vec.append(RNA_dict['P'])
 
     OH_vec = np.asarray(OH_vec)
+    codon_vec = np.asarray(codon_vec)
+    append_vec = np.concatenate((OH_vec, codon_vec), axis=1)
 
-    return OH_vec
+    return append_vec
 
 def get_maxLen(input_pkl):
     max_len = 0
@@ -44,7 +83,7 @@ def get_maxLen(input_pkl):
     
     return max_len
 
-def process_ds(input_pkl, max_len):
+def process_ds(input_pkl):
     '''
     conducts the whole preprocessing of the input pickle file:
     1. converts sequences to onehot
@@ -57,7 +96,7 @@ def process_ds(input_pkl, max_len):
     mask_vecs = []
     for i in range(len(dict_keys)):
         # sequence vectors
-        seq_vecs.append(np.asarray(convertOH(input_pkl[dict_keys[i]][0], max_len)))
+        seq_vecs.append(np.asarray(convertOH(input_pkl[dict_keys[i]][0])))
         
         # count vectors
         # counts per million
@@ -83,6 +122,9 @@ def process_ds(input_pkl, max_len):
 
     # counts_arrays = np.asarray(counts_arrays)
     # seq_vecs = np.asarray(seq_vecs)
+    # # codon_vecs_full = np.asarray(codon_vecs_full)
+    # print(seq_vecs.shape)
+    # print(seq_vecs.shape, codon_vecs_full.shape)
     # mask_vecs = np.asarray(mask_vecs)
 
     seq_vecs_train, seq_vecs_test, counts_arrays_train, counts_arrays_test, mask_vecs_train, mask_vecs_test = train_test_split(seq_vecs, counts_arrays, mask_vecs, test_size=0.2, random_state=42, shuffle=True)
@@ -211,7 +253,7 @@ if __name__ == '__main__':
     print("MAX Sequence Length: ", max_len)
 
     print("---- Dataset Processing ----")
-    seq_vecs_train, seq_vecs_val, seq_vecs_test, counts_arrays_train, counts_arrays_val, counts_arrays_test, mask_vecs_train, mask_vecs_val, mask_vecs_test = process_ds(dict_seqCounts, max_len)
+    seq_vecs_train, seq_vecs_val, seq_vecs_test, counts_arrays_train, counts_arrays_val, counts_arrays_test, mask_vecs_train, mask_vecs_val, mask_vecs_test = process_ds(dict_seqCounts)
 
     print("Train Set: ", len(seq_vecs_train), "|| Validation Set: ", len(seq_vecs_val), "|| Test Set: " , len(seq_vecs_test))
     print("Sample Shapes from Training Set: ", seq_vecs_train[0].shape, counts_arrays_train[0].shape, mask_vecs_train[0].shape)
@@ -220,25 +262,27 @@ if __name__ == '__main__':
     device = torch.device('cpu')
     print("Device: ", device)
 
-    num_feats = 5
-    emsize = 200
-    d_hid = 200 
+    num_feats = 80
+    emsize = 512
+    d_hid = 2048
     nlayers = 2
     nhead = 2
     dropout = 0.2 
     model = TransformerModel(num_feats, emsize, nhead, d_hid, nlayers, dropout).to(device)
     model = model.to(torch.double)
+    pytorch_total_params = sum(p.numel() for p in model.parameters())
+    print(pytorch_total_params)
 
     criterion = nn.MSELoss()
-    lr = 1e-5
+    lr = 1e-3
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 30, factor=0.1)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 30, factor=0.1, verbose=True)
 
     best_val_loss = float('inf')
-    epochs = 500
+    epochs = 5000
     best_model = None 
 
-    # Training Process
+    # # Training Process
     # for epoch in range(1, epochs + 1):
     #     epoch_start_time = time.time()
         
@@ -257,7 +301,7 @@ if __name__ == '__main__':
     #         best_val_loss = val_loss
     #         best_model = copy.deepcopy(model)
     #         print("Best Model -- SAVING")
-    #         torch.save(model.state_dict(), 'models/tf_simple-perHu_noPad_withMASK.pt')
+    #         torch.save(model.state_dict(), 'models/TF_Model_3.pt')
         
     #     print(f'best val loss: {best_val_loss:5.10f}')
 
@@ -272,7 +316,7 @@ if __name__ == '__main__':
     #     scheduler.step(val_loss)
 
     # Evaluation Metrics
-    model.load_state_dict(torch.load('models/tf_simple-perHu_noPad_withMASK.pt'))
+    model.load_state_dict(torch.load('models/TF_Model_3.pt'))
     model.eval()
     with torch.no_grad():
         print("------------- Validation -------------")
@@ -301,4 +345,5 @@ valid loss 0.0056834715
 ------------- Testing -------------
 -----------------------------------------------------------------------------------------
 test loss 0.0045646601
+'1.12.1+cu102'
 '''
