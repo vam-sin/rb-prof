@@ -3,6 +3,7 @@ import pickle as pkl
 import numpy as np
 from sklearn.model_selection import train_test_split
 import random
+import gc
 import math 
 import copy
 import time
@@ -23,27 +24,7 @@ mult_factor = 1e+2
 '-' is for those beginning amino acids for which the codon cant be defined. 
 '''
 
-codon_table = {
-        'ATA':1, 'ATC':2, 'ATT':3, 'ATG':4,
-        'ACA':5, 'ACC':6, 'ACG':7, 'ACT':8,
-        'AAC':9, 'AAT':10, 'AAA':11, 'AAG':12,
-        'AGC':13, 'AGT':14, 'AGA':15, 'AGG':16,                
-        'CTA':17, 'CTC':18, 'CTG':19, 'CTT':20,
-        'CCA':21, 'CCC':22, 'CCG':23, 'CCT':24,
-        'CAC':25, 'CAT':26, 'CAA':27, 'CAG':28,
-        'CGA':29, 'CGC':30, 'CGG':31, 'CGT':32,
-        'GTA':33, 'GTC':34, 'GTG':35, 'GTT':36,
-        'GCA':37, 'GCC':38, 'GCG':39, 'GCT':40,
-        'GAC':41, 'GAT':42, 'GAA':43, 'GAG':44,
-        'GGA':45, 'GGC':46, 'GGG':47, 'GGT':48,
-        'TCA':49, 'TCC':50, 'TCG':51, 'TCT':52,
-        'TTC':53, 'TTT':54, 'TTA':55, 'TTG':56,
-        'TAC':57, 'TAT':58, 'TAA':59, 'TAG':60,
-        'TGC':61, 'TGT':62, 'TGA':63, 'TGG':64,
-        '-': 65, 'NNG': 66, 'NGG': 67, 'NNT': 68,
-        'NTG': 69, 'NAC': 70, 'NNC': 71, 'NCC': 72,
-        'NGC': 73, 'NCA': 74, 'NGA': 75
-    }
+codon_embeds = np.load('../../data/rb_prof_Naef/processed_data_full/codons_embeds.npy', allow_pickle='TRUE').item()
 
 def convertOH(seq):
     '''
@@ -58,12 +39,10 @@ def convertOH(seq):
     for i in range(len(seq)):
         # print(i)
         codon_seq = seq[i-2:i+1]
-        vec_add = np.zeros((len(codon_table)))
         if len(codon_seq) < 3:
-            vec_add[codon_table['-']-1] = 1
+            codon_vec.append(codon_embeds['-'])
         else:
-            vec_add[codon_table[codon_seq]-1] = 1
-        codon_vec.append(vec_add)
+            codon_vec.append(codon_embeds[str(codon_seq)])
     
     # for j in range(max_len - len(seq)):
     #     OH_vec.append(RNA_dict['P'])
@@ -96,29 +75,30 @@ def process_ds(input_pkl):
     mask_vecs = []
     for i in range(len(dict_keys)):
         # sequence vectors
-        seq_vecs.append(np.asarray(convertOH(input_pkl[dict_keys[i]][0])))
-        
-        # count vectors
-        # counts per million
-        c_arr_sample = np.asarray(input_pkl[dict_keys[i]][1]) * mult_factor
-        
-        # c_arr_sample = np.asarray(input_pkl[dict_keys[i]][1])
-        # full_c_arr_sample = np.ones((max_len,)) # extra ones are padding
-        # full_c_arr_sample[0:len(c_arr_sample)] = c_arr_sample
-        # full_c_arr_sample = np.expand_dims(full_c_arr_sample, axis=1)
-        counts_arrays.append(c_arr_sample)
+        if len(input_pkl[dict_keys[i]][0]) < 20000:
+            seq_vecs.append(np.asarray(convertOH(input_pkl[dict_keys[i]][0])))
+            
+            # count vectors
+            # counts per million
+            c_arr_sample = np.asarray(input_pkl[dict_keys[i]][1]) * mult_factor
+            
+            # c_arr_sample = np.asarray(input_pkl[dict_keys[i]][1])
+            # full_c_arr_sample = np.ones((max_len,)) # extra ones are padding
+            # full_c_arr_sample[0:len(c_arr_sample)] = c_arr_sample
+            # full_c_arr_sample = np.expand_dims(full_c_arr_sample, axis=1)
+            counts_arrays.append(c_arr_sample)
 
-        # mask vectors 
-        # full_mask_sample = np.zeros((max_len,))
-        mask_sample = []
-        for j in range(len(c_arr_sample)):
-            if c_arr_sample[j] == 0.0:
-                mask_sample.append(0)
-            else:
-                mask_sample.append(1)
-        mask_sample = np.asarray(mask_sample)
-        # full_mask_sample[0:len(c_arr_sample)] = mask_sample
-        mask_vecs.append(np.expand_dims(mask_sample, axis=1))
+            # mask vectors 
+            # full_mask_sample = np.zeros((max_len,))
+            mask_sample = []
+            for j in range(len(c_arr_sample)):
+                if c_arr_sample[j] == 0.0:
+                    mask_sample.append(0)
+                else:
+                    mask_sample.append(1)
+            mask_sample = np.asarray(mask_sample)
+            # full_mask_sample[0:len(c_arr_sample)] = mask_sample
+            mask_vecs.append(np.expand_dims(mask_sample, axis=1))
 
     # counts_arrays = np.asarray(counts_arrays)
     # seq_vecs = np.asarray(seq_vecs)
@@ -143,6 +123,7 @@ class TransformerModel(nn.Module):
         d_model: num_feats from input
         nhead: num of multihead attention models
         d_hid: dimension of the FFN
+        how many nts distance is the attention heads looking at.
         '''
         encoder_layers = TransformerEncoderLayer(d_model, nhead, d_hid, dropout)
 
@@ -197,16 +178,20 @@ class PositionalEncoding(nn.Module):
 def train(model: nn.Module, seq_vecs_train, counts_arrays_train, mask_vecs_train) -> None:
     model.train()
     total_loss = 0. 
-    log_interval = 10 
+    log_interval = 500 
     start_time = time.time() 
-
+    # print("CUDA {}".format(torch.cuda.memory_allocated(device)/(1024*1024)))
     for i in range(len(seq_vecs_train)):
         # print(seq_vecs_train[i].shape, counts_arrays_train[i].shape, mask_vecs_train[i].shape)
         seq_len = len(seq_vecs_train[i])
-        x_in = torch.from_numpy(seq_vecs_train[i]).to(device).double()
-        src_mask = generate_square_subsequent_mask(seq_len).to(device)
+        # print("seq_len={}".format(seq_len))
+        # print("seq_train_shape={}".format(seq_vecs_train[i].shape))
+        x_in = torch.from_numpy(seq_vecs_train[i]).float().to(device)
+        # print("CUDA {}".format(torch.cuda.memory_allocated(device)/(1024*1024)))
+        src_mask = generate_square_subsequent_mask(seq_len).float().to(device)
+        # print("CUDA {}".format(torch.cuda.memory_allocated(device)/(1024*1024)))
         y_pred = torch.flatten(model(x_in, src_mask))
-        y_true = torch.flatten(torch.from_numpy(counts_arrays_train[i])).to(device)
+        y_true = torch.flatten(torch.from_numpy(counts_arrays_train[i])).float().to(device)
         mask_vec_sample = torch.flatten(torch.from_numpy(mask_vecs_train[i])).to(device)
 
         y_pred = torch.mul(y_pred, mask_vec_sample)
@@ -219,6 +204,22 @@ def train(model: nn.Module, seq_vecs_train, counts_arrays_train, mask_vecs_train
         optimizer.step()
 
         total_loss += loss.item()
+
+        # print(torch.cuda.memory_summary(device=None, abbreviated=True))
+
+        # remove from GPU device
+        del x_in
+        del src_mask
+        del y_true
+        del mask_vec_sample
+        del y_pred
+        gc.collect()
+        torch.cuda.empty_cache()
+        # print(torch.cuda.memory_allocated(device)/(1024*1024))
+        
+        # print(torch.cuda.memory_summary(device=None, abbreviated=True))
+
+
         if (i+1) % log_interval == 0:
             print(f'| samples trained: {i+1:5d} | train (intermediate) loss: {total_loss/(i+1):5.10f} | ')
 
@@ -233,20 +234,32 @@ def evaluate(model: nn.Module, seq_vecs_val, counts_arrays_val, mask_vecs_val) -
             # print(i)
             seq_len = len(seq_vecs_val[i])
             src_mask = generate_square_subsequent_mask(seq_len).to(device)
-            y_pred = torch.flatten(model(torch.from_numpy(seq_vecs_val[i]).double(), src_mask))
-            y_true = torch.flatten(torch.from_numpy(counts_arrays_val[i]))
-            mask_vec_sample = torch.flatten(torch.from_numpy(mask_vecs_val[i]))
+            x_in = torch.from_numpy(seq_vecs_val[i]).float().to(device)
+            y_pred = torch.flatten(model(x_in, src_mask))
+            y_true = torch.flatten(torch.from_numpy(counts_arrays_val[i])).to(device)
+            mask_vec_sample = torch.flatten(torch.from_numpy(mask_vecs_val[i])).to(device)
 
             y_pred = torch.mul(y_pred, mask_vec_sample)
             y_true = torch.mul(y_true, mask_vec_sample)
             loss = criterion(y_pred, y_true)
 
             total_loss += loss.item()
+
+            del x_in
+            del src_mask
+            del y_pred
+            del y_true
+            del mask_vec_sample
+            del loss
+            
+            gc.collect()
+            torch.cuda.empty_cache()
+
     return total_loss / (len(seq_vecs_val) - 1)
 
 if __name__ == '__main__':
     # import data 
-    with open('../../data/rb_prof_Naef/processed_data/seq_annot_final/ensembl_Tr_Seq_CTRL_merged_final.pkl', 'rb') as f:
+    with open('../../data/rb_prof_Naef/processed_data_full/seq_annot_final/ensembl_Tr_Seq_CTRL_merged_final.pkl', 'rb') as f:
         dict_seqCounts = pkl.load(f)
 
     max_len = get_maxLen(dict_seqCounts)
@@ -258,18 +271,18 @@ if __name__ == '__main__':
     print("Train Set: ", len(seq_vecs_train), "|| Validation Set: ", len(seq_vecs_val), "|| Test Set: " , len(seq_vecs_test))
     print("Sample Shapes from Training Set: ", seq_vecs_train[0].shape, counts_arrays_train[0].shape, mask_vecs_train[0].shape)
 
-    # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    device = torch.device('cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    # device = torch.device('cpu')
     print("Device: ", device)
 
-    num_feats = 80
+    num_feats = 105
     emsize = 512
     d_hid = 2048
     nlayers = 2
     nhead = 2
     dropout = 0.2 
     model = TransformerModel(num_feats, emsize, nhead, d_hid, nlayers, dropout).to(device)
-    model = model.to(torch.double)
+    model = model.to(torch.float)
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     print(pytorch_total_params)
 
@@ -282,41 +295,41 @@ if __name__ == '__main__':
     epochs = 5000
     best_model = None 
 
-    # # Training Process
-    # for epoch in range(1, epochs + 1):
-    #     epoch_start_time = time.time()
+    # Training Process
+    for epoch in range(1, epochs + 1):
+        epoch_start_time = time.time()
         
-    #     print(f'Training Epoch: {epoch:5d}')
-    #     train(model, seq_vecs_train, counts_arrays_train, mask_vecs_train)
+        print(f'Training Epoch: {epoch:5d}')
+        train(model, seq_vecs_train, counts_arrays_train, mask_vecs_train)
 
-    #     print("------------- Validation -------------")
-    #     val_loss = evaluate(model, seq_vecs_val, counts_arrays_val, mask_vecs_val)
-    #     elapsed = time.time() - epoch_start_time
-    #     print('-' * 89)
-    #     print(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
-    #       f'valid loss {val_loss:5.10f}')
-    #     print('-' * 89)
+        print("------------- Validation -------------")
+        val_loss = evaluate(model, seq_vecs_val, counts_arrays_val, mask_vecs_val)
+        elapsed = time.time() - epoch_start_time
+        print('-' * 89)
+        print(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
+          f'valid loss {val_loss:5.10f}')
+        print('-' * 89)
 
-    #     if val_loss < best_val_loss:
-    #         best_val_loss = val_loss
-    #         best_model = copy.deepcopy(model)
-    #         print("Best Model -- SAVING")
-    #         torch.save(model.state_dict(), 'models/TF_Model_3.pt')
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_model = copy.deepcopy(model)
+            print("Best Model -- SAVING")
+            torch.save(model.state_dict(), 'models/TF_Model_5.pt')
         
-    #     print(f'best val loss: {best_val_loss:5.10f}')
+        print(f'best val loss: {best_val_loss:5.10f}')
 
-    #     print("------------- Testing -------------")
-    #     test_loss = evaluate(model, seq_vecs_test, counts_arrays_test, mask_vecs_test)
-    #     elapsed = time.time() - epoch_start_time
-    #     print('-' * 89)
-    #     print(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
-    #       f'test loss {test_loss:5.10f}')
-    #     print('-' * 89)
+        print("------------- Testing -------------")
+        test_loss = evaluate(model, seq_vecs_test, counts_arrays_test, mask_vecs_test)
+        elapsed = time.time() - epoch_start_time
+        print('-' * 89)
+        print(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
+          f'test loss {test_loss:5.10f}')
+        print('-' * 89)
 
-    #     scheduler.step(val_loss)
+        scheduler.step(val_loss)
 
     # Evaluation Metrics
-    model.load_state_dict(torch.load('models/TF_Model_3.pt'))
+    model.load_state_dict(torch.load('models/TF_Model_5.pt'))
     model.eval()
     with torch.no_grad():
         print("------------- Validation -------------")
