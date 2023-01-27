@@ -13,6 +13,7 @@ from torch import nn, Tensor
 import torch.nn.functional as F 
 from torch.nn import TransformerEncoder, TransformerEncoderLayer 
 from tqdm import tqdm
+from scipy.stats import pearsonr
 
 # reproducibility
 random.seed(0)
@@ -38,14 +39,17 @@ def convertOH(seq):
     
     for i in range(len(seq)):
         # print(i)
-        codon_seq = seq[i-2:i+1]
+        if i%3 == 0:
+            codon_seq = seq[i:i+3]
+        if i%3 == 1:
+            codon_seq = seq[i-1:i+2]
+        if i%3 == 2:
+            codon_seq = seq[i-2:i+1]
+        
         if len(codon_seq) < 3:
             codon_vec.append(codon_embeds['-'])
         else:
             codon_vec.append(codon_embeds[str(codon_seq)])
-    
-    # for j in range(max_len - len(seq)):
-    #     OH_vec.append(RNA_dict['P'])
 
     OH_vec = np.asarray(OH_vec)
     codon_vec = np.asarray(codon_vec)
@@ -75,7 +79,7 @@ def process_ds(input_pkl):
     mask_vecs = []
     for i in range(len(dict_keys)):
         # sequence vectors
-        if len(input_pkl[dict_keys[i]][0]) < 20000:
+        if len(input_pkl[dict_keys[i]][0]) < 10000:
             seq_vecs.append(np.asarray(convertOH(input_pkl[dict_keys[i]][0])))
             
             # count vectors
@@ -178,25 +182,35 @@ class PositionalEncoding(nn.Module):
 def train(model: nn.Module, seq_vecs_train, counts_arrays_train, mask_vecs_train) -> None:
     model.train()
     total_loss = 0. 
-    log_interval = 500 
+    log_interval = 100 
     start_time = time.time() 
-    # print("CUDA {}".format(torch.cuda.memory_allocated(device)/(1024*1024)))
+    corr_lis = []
     for i in range(len(seq_vecs_train)):
-        # print(seq_vecs_train[i].shape, counts_arrays_train[i].shape, mask_vecs_train[i].shape)
         seq_len = len(seq_vecs_train[i])
-        # print("seq_len={}".format(seq_len))
-        # print("seq_train_shape={}".format(seq_vecs_train[i].shape))
         x_in = torch.from_numpy(seq_vecs_train[i]).float().to(device)
-        # print("CUDA {}".format(torch.cuda.memory_allocated(device)/(1024*1024)))
         src_mask = generate_square_subsequent_mask(seq_len).float().to(device)
-        # print("CUDA {}".format(torch.cuda.memory_allocated(device)/(1024*1024)))
         y_pred = torch.flatten(model(x_in, src_mask))
         y_true = torch.flatten(torch.from_numpy(counts_arrays_train[i])).float().to(device)
         mask_vec_sample = torch.flatten(torch.from_numpy(mask_vecs_train[i])).to(device)
 
         y_pred = torch.mul(y_pred, mask_vec_sample)
         y_true = torch.mul(y_true, mask_vec_sample)
+
         loss = criterion(y_pred, y_true)
+
+        y_pred_imp_seq = []
+        y_true_imp_seq = []
+        for x in range(len(y_pred.cpu().detach().numpy())):
+            if y_true[x].item() != 0:
+                y_pred_imp_seq.append(y_pred[x].item())
+                y_true_imp_seq.append(y_true[x].item())
+        # print(y_pred_imp_seq)
+        corr, _ = pearsonr(y_true_imp_seq, y_pred_imp_seq)
+        print(corr)
+        if corr == np.nan:
+            print(corr, y_pred_imp_seq)
+
+        corr_lis.append(corr)
         # print(loss)
         optimizer.zero_grad()
         loss.backward()
@@ -204,8 +218,6 @@ def train(model: nn.Module, seq_vecs_train, counts_arrays_train, mask_vecs_train
         optimizer.step()
 
         total_loss += loss.item()
-
-        # print(torch.cuda.memory_summary(device=None, abbreviated=True))
 
         # remove from GPU device
         del x_in
@@ -215,23 +227,19 @@ def train(model: nn.Module, seq_vecs_train, counts_arrays_train, mask_vecs_train
         del y_pred
         gc.collect()
         torch.cuda.empty_cache()
-        # print(torch.cuda.memory_allocated(device)/(1024*1024))
-        
-        # print(torch.cuda.memory_summary(device=None, abbreviated=True))
-
 
         if (i+1) % log_interval == 0:
-            print(f'| samples trained: {i+1:5d} | train (intermediate) loss: {total_loss/(i+1):5.10f} | ')
+            print(f'| samples trained: {i+1:5d} | train (intermediate) loss: {total_loss/(i+1):5.10f} | train (intermediate) pr: {np.mean(corr_lis):5.10f} |')
 
-    print(f'Epoch Train Loss: {total_loss/len(seq_vecs_train): 5.10f}')
+    print(f'Epoch Train Loss: {total_loss/len(seq_vecs_train): 5.10f} | train pr: {np.mean(corr_lis):5.10f} |')
 
 def evaluate(model: nn.Module, seq_vecs_val, counts_arrays_val, mask_vecs_val) -> float:
     # print("Evaluating")
     model.eval()
     total_loss = 0 
+    corr_lis = []
     with torch.no_grad():
         for i in range(len(seq_vecs_val)):
-            # print(i)
             seq_len = len(seq_vecs_val[i])
             src_mask = generate_square_subsequent_mask(seq_len).to(device)
             x_in = torch.from_numpy(seq_vecs_val[i]).float().to(device)
@@ -241,7 +249,18 @@ def evaluate(model: nn.Module, seq_vecs_val, counts_arrays_val, mask_vecs_val) -
 
             y_pred = torch.mul(y_pred, mask_vec_sample)
             y_true = torch.mul(y_true, mask_vec_sample)
+
             loss = criterion(y_pred, y_true)
+
+            y_pred_imp_seq = []
+            y_true_imp_seq = []
+            for x in range(len(y_pred.cpu().detach().numpy())):
+                if y_true[x].item() != 0:
+                    y_pred_imp_seq.append(y_pred[x].item())
+                    y_true_imp_seq.append(y_true[x].item())
+
+            corr, _ = pearsonr(y_true_imp_seq, y_pred_imp_seq)
+            corr_lis.append(corr)
 
             total_loss += loss.item()
 
@@ -255,11 +274,13 @@ def evaluate(model: nn.Module, seq_vecs_val, counts_arrays_val, mask_vecs_val) -
             gc.collect()
             torch.cuda.empty_cache()
 
+    print(f'| PR: {np.mean(corr_lis):5.5f} |')
+
     return total_loss / (len(seq_vecs_val) - 1)
 
 if __name__ == '__main__':
     # import data 
-    with open('../../data/rb_prof_Naef/processed_data_full/seq_annot_final/ensembl_Tr_Seq_CTRL_merged_final.pkl', 'rb') as f:
+    with open('../../data/rb_prof_Naef/processed_proper/seq_annot_final/ensembl_Tr_Seq_CTRL_merged_finalNonEmpty.pkl', 'rb') as f:
         dict_seqCounts = pkl.load(f)
 
     max_len = get_maxLen(dict_seqCounts)
@@ -287,9 +308,9 @@ if __name__ == '__main__':
     print(pytorch_total_params)
 
     criterion = nn.MSELoss()
-    lr = 1e-3
+    lr = 1e-6
     optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 30, factor=0.1, verbose=True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 10, factor=0.1, verbose=True)
 
     best_val_loss = float('inf')
     epochs = 5000
@@ -314,7 +335,7 @@ if __name__ == '__main__':
             best_val_loss = val_loss
             best_model = copy.deepcopy(model)
             print("Best Model -- SAVING")
-            torch.save(model.state_dict(), 'models/TF_Model_5.pt')
+            torch.save(model.state_dict(), 'models/TF_Reg_0.pt')
         
         print(f'best val loss: {best_val_loss:5.10f}')
 
@@ -329,7 +350,7 @@ if __name__ == '__main__':
         scheduler.step(val_loss)
 
     # Evaluation Metrics
-    model.load_state_dict(torch.load('models/TF_Model_5.pt'))
+    model.load_state_dict(torch.load('models/TF_Reg_0.pt'))
     model.eval()
     with torch.no_grad():
         print("------------- Validation -------------")

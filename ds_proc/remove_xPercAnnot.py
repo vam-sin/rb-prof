@@ -1,3 +1,6 @@
+'''
+removes those sequences with less than x% of the sequence annotated
+'''
 # libraries
 import pandas as pd 
 import numpy as np
