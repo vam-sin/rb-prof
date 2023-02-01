@@ -35,7 +35,7 @@ if __name__ == '__main__':
     manager = Manager()
     dict_lists = [manager.list(dict_seqCounts[keys_list[x]]) for x in range(len(keys_list))]
     dict_data = manager.dict(zip(keys_list, dict_lists))
-    num_workers = 8
+    num_workers = 32
     for i in range(0, len(keys_list), num_workers):
         worker_pool = []
         for x in range(num_workers):
