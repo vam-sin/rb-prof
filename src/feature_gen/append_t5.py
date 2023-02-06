@@ -17,7 +17,7 @@ for i in range(1, 100):
 print(pb_arr.shape)
 # np.savez_compressed('/mnt/scratch/lts2/nallapar/rb-prof/CTRL_Embeddings_Full_Res_T5.npz', pb_arr)
 
-ds = pd.read_csv('../../data/rb_prof_Naef/processed_proper/seq_annot_final/Prot_CTRL_Dataset.csv')
+ds = pd.read_csv('../../data/rb_prof_Naef/processed_proper/seq_annot_raw/T5_files/Prot_CTRL_Dataset.csv')
 
 labels = list(ds["Record"])
 

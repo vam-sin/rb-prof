@@ -6,7 +6,7 @@ import pandas as pd
 print("Starting")
 embedder = ProtTransT5BFDEmbedder()
 print("Loaded")
-ds = pd.read_csv('../../data/rb_prof_Naef/processed_proper/seq_annot_final/Prot_CTRL_Dataset.csv')
+ds = pd.read_csv('../../data/rb_prof_Naef/processed_proper/seq_annot_raw/T5_files/Prot_CTRL_Dataset.csv')
 
 sequences_Example = list(ds["Sequence"])
 # num_seq = len(sequences_Example)
