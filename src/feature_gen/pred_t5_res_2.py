@@ -9,10 +9,10 @@ print("Loaded")
 ds = pd.read_csv('/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_raw/Prot_FINAL.csv')
 
 sequences_Example = list(ds["Sequence"])
-# num_seq = len(sequences_Example)
-num_seq = 10000
+num_seq = len(sequences_Example)
+# num_seq = 10000
 
-i = 0
+i = 10000
 length = 500
 while i < num_seq:
 	print("Doing", i, num_seq)

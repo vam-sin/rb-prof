@@ -27,7 +27,8 @@ def process_sample(input_key, mult_factor):
     3. generates mask
     4. returns all these
     '''
-    filename_ = '/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon/' + input_key
+    filename_ = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon/' + input_key
+    # filename_ = '/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon/' + input_key
     arr = np.load(filename_, allow_pickle=True)['arr_0'].item()
     # X = arr['feature_vec'][:,:5] # trying only with nt features
     X = arr['feature_vec']
@@ -99,7 +100,7 @@ class PositionalEncoding(nn.Module):
         x = x + self.pe[:x.size(0)]
         return self.dropout(x)
 
-def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_mult_factor) -> None:
+def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger) -> None:
     print("Training")
     model.train()
     total_loss = 0. 
@@ -153,14 +154,14 @@ def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_m
 
     logger.info(f'Epoch Train Loss: {total_loss/len(tr_train): 5.10f} | train pr: {np.mean(pearson_corr_lis):5.10f} | train sr: {np.mean(spearman_corr_lis):5.10f} |')
 
-def evaluate(model: nn.Module, tr_val, device, mult_factor, criterion) -> float:
+def evaluate(model: nn.Module, tr_val, device, mult_factor, criterion, logger) -> float:
     print("Evaluating")
     model.eval()
     total_loss = 0 
     corr_lis = []
     with torch.no_grad():
         for i in range(len(tr_val)):
-            X, y, mask_vec = process_sample(tr_val[i], mult_factor)
+            X, y = process_sample(tr_val[i], mult_factor)
             if len(X) < 10000:
                 seq_len = len(X)
                 src_mask = generate_square_subsequent_mask(seq_len).to(device)

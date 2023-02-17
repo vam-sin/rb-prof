@@ -3,6 +3,7 @@ import pickle as pkl
 import numpy as np 
 from multiprocessing import Process, current_process, Manager
 from sknetwork.embedding import Spectral
+import RNA
 import sys
 
 # np.set_printoptions(threshold=sys.maxsize)
@@ -68,8 +69,7 @@ if __name__ == '__main__':
     a = input("Finished")
 
     with open('../../data/rb_prof_Naef/processed_proper/seq_annot_raw/LEM_files/LEM.pkl', 'wb') as f:
-        pkl.dump(embeds_list, f)
+        pkl.dump(dict(embeds_list), f)
 
 '''
-
 '''

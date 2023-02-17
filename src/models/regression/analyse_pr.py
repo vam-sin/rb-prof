@@ -13,7 +13,7 @@ import torch
 from torch import nn, Tensor 
 import torch.nn.functional as F 
 from torch.nn import TransformerEncoder, TransformerEncoderLayer 
-from transformer_reg_fullFT import process_sample, TransformerModel, generate_square_subsequent_mask, PositionalEncoding
+from model_utils import process_sample, TransformerModel, generate_square_subsequent_mask, PositionalEncoding
 from tqdm import tqdm
 from scipy.stats import pearsonr
 from os import listdir
@@ -43,7 +43,7 @@ logger.addHandler(sh)
 random.seed(0)
 np.random.seed(0)
 
-mult_factor = 1e+6
+mult_factor = 1
 
 def eval_pr(model: nn.Module, tr_val_key) -> float:
     # print("Evaluating")
@@ -53,7 +53,7 @@ def eval_pr(model: nn.Module, tr_val_key) -> float:
     len_lis = []
     with torch.no_grad():
         # print(i, tr_val[i])
-        X, y, mask_vec = process_sample(tr_val_key)
+        X, y = process_sample(tr_val_key, mult_factor)
         # print(X.shape)
         seq_len = len(X)
         
@@ -73,20 +73,26 @@ def eval_pr(model: nn.Module, tr_val_key) -> float:
             y_true_imp_seq.append(y_true[x].item())
 
         corr, _ = pearsonr(y_true_imp_seq, y_pred_imp_seq) # y axis is predictions, x axis is true value
-        logging.info(f'Corr: {corr:3.5f}')
-        logging.info(f'Loss: {loss:3.5f}')
         for k in range(len(y_true_imp_seq)):
             len_lis.append(k)
-            print(y_true_imp_seq[k], y_pred_imp_seq[k])
+            len_ = min([k + 100, len(y_true_imp_seq)])
+            print(k, len_, y_true_imp_seq[k], y_pred_imp_seq[k], pearsonr(y_true_imp_seq[k:len_], y_pred_imp_seq[k:len_]))
+            # mape = (np.absolute(y_pred_imp_seq[k]-y_true_imp_seq[k]) / (y_true_imp_seq[k] + 1e-16))*100
+            # if mape >= 200 and y_true_imp_seq[k] != 0:
+            #     print(y_true_imp_seq[k], y_pred_imp_seq[k], mape)
+        
+        logging.info(f'Corr: {corr:3.5f}')
+        logging.info(f'Loss: {loss:3.5f}')
+
         sns.lineplot(x=len_lis, y=y_pred_imp_seq, label='Predicted', color='#f0932b')
         sns.lineplot(x=len_lis, y=y_true_imp_seq, label='True', color='#6ab04c')
         plt.legend()
-        plt.show()
-        plt.savefig("pr_figs/TF-Reg-Model-0/" + tr_val_key + ".png", format="png")
+        # plt.show()
+        # plt.savefig("pr_figs/TF-Reg-Model-0/" + tr_val_key + ".png", format="png")
 
 if __name__ == '__main__':
     # import data 
-    with open('keys_proc.pkl', 'rb') as f:
+    with open('processed_keys/keys_proc_20c_60p.pkl', 'rb') as f:
         onlyfiles = pkl.load(f)
     print("Total Number of Samples: ", len(onlyfiles))
 
@@ -121,7 +127,7 @@ if __name__ == '__main__':
     model.eval()
     with torch.no_grad():
         print("------------- Validation -------------")
-        f = 4
+        f = 3
         eval_pr(model, tr_train[10 * f])
 
 
