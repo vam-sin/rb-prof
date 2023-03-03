@@ -12,23 +12,23 @@ def mean_string(vals):
     # print(vals_split)
     return float(np.mean(vals_split))
 
-ds1 = pd.read_csv('../data/rb_prof_Naef/processed_proper/gnorm/CTRL_1_RIBO_gnorm.csv')
-ds1.columns = ["index", "gene", "transcript", "position_A_site", "count", "count_GScale"]
-ds1 = ds1.drop(["index"], axis=1)
+ds1 = pd.read_csv('/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr/CTRL_1_RIBO.tsv', sep=' ')
+ds1.columns = ["gene", "transcript", "position_A_site", "count"]
+# ds1 = ds1.drop(["index"], axis=1)
+print(ds1)
+
+ds2 = pd.read_csv('/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr/CTRL_2_RIBO.tsv', sep=' ')
+ds2.columns = ["gene", "transcript", "position_A_site", "count"]
+# ds2 = ds2.drop(["index"], axis=1)
 # print(ds)
 
-ds2 = pd.read_csv('../data/rb_prof_Naef/processed_proper/gnorm/CTRL_2_RIBO_gnorm.csv')
-ds2.columns = ["index", "gene", "transcript", "position_A_site", "count", "count_GScale"]
-ds2 = ds2.drop(["index"], axis=1)
-# print(ds)
-
-ds3 = pd.read_csv('../data/rb_prof_Naef/processed_proper/gnorm/CTRL_3_RIBO_gnorm.csv')
-ds3.columns = ["index", "gene", "transcript", "position_A_site", "count", "count_GScale"]
-ds3 = ds3.drop(["index"], axis=1)
+ds3 = pd.read_csv('/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr/CTRL_3_RIBO.tsv', sep=' ')
+ds3.columns = ["gene", "transcript", "position_A_site", "count"]
+# ds3 = ds3.drop(["index"], axis=1)
 # print(ds)
 
 # merge the dataframes
-merge_df = pd.DataFrame(columns=["gene", "transcript", "position_A_site", "count", "count_GScale"])
+merge_df = pd.DataFrame(columns=["gene", "transcript", "position_A_site", "count"])
 
 print(merge_df)
 
@@ -47,12 +47,12 @@ for i in range(len(tr_full)):
     ds3_seg = ds3[ds3["transcript"].isin([tr_full[i]])]
     ds_seg_merge = pd.concat([ds1_seg, ds2_seg, ds3_seg], axis=0)
     gene_id = list(ds_seg_merge["gene"])[0]
-    ds_seg_merge['count_GScale'] = ds_seg_merge['count_GScale'].astype(str)
-    ds_seg_merge.groupby('position_A_site')['count_GScale'].agg(','.join).reset_index()
+    ds_seg_merge['count'] = ds_seg_merge['count'].astype(str)
+    ds_seg_merge.groupby('position_A_site')['count'].agg(','.join).reset_index()
     # print(ds_seg_merge)
-    ds_seg_merge["count_GScale"] = ds_seg_merge["count_GScale"].apply(mean_string)
+    ds_seg_merge["count"] = ds_seg_merge["count"].apply(mean_string)
     # print(ds_seg_merge)
     merge_df = pd.concat([merge_df, ds_seg_merge], axis=0)
     # print(merge_df)
 
-merge_df.to_csv('../data/rb_prof_Naef/processed_proper/merge_gnorm/merge_gnorm_CTRL.csv')
+merge_df.to_csv('/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/merge_NoNorm/merge_NoNorm_CTRL.csv')

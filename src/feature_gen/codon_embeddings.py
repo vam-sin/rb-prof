@@ -1,8 +1,4 @@
-from gensim.models import KeyedVectors
 import numpy as np
-
-filepath = '../../repos/dna2vec/results/dna2vec-k3to3-withN.w2v'
-mk_model = KeyedVectors.load_word2vec_format(filepath, binary=False)
 
 codon_table = {
         'ATA':1, 'ATC':2, 'ATT':3, 'ATG':4,
@@ -20,8 +16,7 @@ codon_table = {
         'TCA':49, 'TCC':50, 'TCG':51, 'TCT':52,
         'TTC':53, 'TTT':54, 'TTA':55, 'TTG':56,
         'TAC':57, 'TAT':58, 'TAA':59, 'TAG':60,
-        'TGC':61, 'TGT':62, 'TGA':63, 'TGG':64,
-        '-': 65, 'NNG': 66, 'NGG': 67, 'NNT': 68,
+        'TGC':61, 'TGT':62, 'TGA':63, 'TGG':64, 'NNG': 66, 'NGG': 67, 'NNT': 68,
         'NTG': 69, 'NAC': 70, 'NNC': 71, 'NCC': 72,
         'NGC': 73, 'NCA': 74, 'NGA': 75, 'NNA': 76,
         'NAG': 77, 'NTC': 78, 'NAT': 79, 'NGT': 80,
@@ -29,34 +24,44 @@ codon_table = {
         'NTA': 85
     }
 
+dict_codon_embeds = {}
+
 codons = list(codon_table.keys())
-print(codons)
+print(len(codons))
 
+codon_embeds = np.load('DNABERT_Codon_Embeds.npz', allow_pickle=True)['arr_0']
+print(codon_embeds.shape)
 
-key2index = mk_model.key_to_index
-embeds = {}
+nts = ['A', 'T', 'G', 'C']
 
 for i in range(len(codons)):
-    if codons[i] not in ['-']:
-        index_ = key2index[codons[i]]
-        print(i, codons[i], index_)
-        embeds[codons[i]] = mk_model[index_]
+    if 'N' not in codons[i]:
+        dict_codon_embeds[codons[i]] = codon_embeds[i]
+        print(codon_embeds[i].shape)
+    else:
+        codon_key = codons[i]
+        permutations_list = []
+        embeddings_list = []
+        if codon_key[0] == 'N':
+            if codon_key[1] == 'N':
+                for x in range(len(nts)):
+                    for y in range(len(nts)):
+                        key = nts[x] + nts[y] + codon_key[2]
+                        permutations_list.append(key)
+            else:
+                for x in range(len(nts)):
+                    key = nts[x] + codon_key[1] + codon_key[2]
+                    permutations_list.append(key)
+        
+        for k in range(len(permutations_list)):
+            embeddings_list.append(dict_codon_embeds[permutations_list[k]])
+        embeddings_list = np.asarray(embeddings_list)
+        print(embeddings_list.shape)
+        print(codon_key, permutations_list)
+        mean_embed = np.mean(embeddings_list, axis=0)
+        print(mean_embed.shape)
+        dict_codon_embeds[codons[i]] = mean_embed
 
-# print(len(mk_model[0]))
+print(len(list(dict_codon_embeds.keys())))
 
-embeds['-'] = np.zeros((100))
-# embeds['NNG'] = (embeds['ACG'] + embeds['CTG'] + embeds['CCG'] + embeds['CGG'] + embeds['GTG'] + embeds['GCG'] + embeds['GGG'] + embeds['TCG'] + embeds['ATG'] + embeds['AAG'] + embeds['AGG'] + embeds['CAG'] + embeds['GAG'] + embeds['TTG'] + embeds['TAG'] + embeds['TGG']) / 16
-# embeds['NGG'] = (embeds['AGG'] + embeds['CGG'] + embeds['TGG'] + embeds['GGG']) / 4
-# embeds['NNT'] = (embeds['ACT'] + embeds['CTT'] + embeds['CCT'] + embeds['CGT'] + embeds['GTT'] + embeds['GCT'] + embeds['GGT'] + embeds['TCT'] + embeds['ATT'] + embeds['AAT'] + embeds['AGT'] + embeds['CAT'] + embeds['GAT'] + embeds['TTT'] + embeds['TAT'] + embeds['TGT']) / 16
-# embeds['NTG'] = (embeds['ATG'] + embeds['CTG'] + embeds['TTG'] + embeds['GTG']) / 4
-# embeds['NAC'] = (embeds['AAC'] + embeds['CAC'] + embeds['TAC'] + embeds['GAC']) / 4
-# embeds['NNC'] = (embeds['ACC'] + embeds['CTC'] + embeds['CCC'] + embeds['CGC'] + embeds['GTC'] + embeds['GCC'] + embeds['GGC'] + embeds['TCC'] + embeds['ATC'] + embeds['AAC'] + embeds['AGC'] + embeds['CAC'] + embeds['GAC'] + embeds['TTC'] + embeds['TAC'] + embeds['TGC']) / 16
-# embeds['NCC'] = (embeds['ACC'] + embeds['CCC'] + embeds['TCC'] + embeds['GCC']) / 4
-# embeds['NGC'] = (embeds['AGC'] + embeds['CGC'] + embeds['TGC'] + embeds['GGC']) / 4
-# embeds['NCA'] = (embeds['ACA'] + embeds['CCA'] + embeds['TCA'] + embeds['GCA']) / 4
-# embeds['NGA'] = (embeds['AGA'] + embeds['CGA'] + embeds['TGA'] + embeds['GGA']) / 4
-
-print(len(list(embeds.keys())))
-# print(embeds)
-np.save('../../data/rb_prof_Naef/processed_proper/codons_embeds.npy', embeds) 
-
+np.save('DNABERT_Codon_Embeds_NAv.npy', dict_codon_embeds)

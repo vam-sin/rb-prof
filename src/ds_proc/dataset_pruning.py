@@ -53,15 +53,17 @@ num_counts = []
 perc_counts = []
 
 for i in range(len(keys_lis)):
-    if (count_ds[keys_lis[i]]['num_counts']) > 20 and (count_ds[keys_lis[i]]['perc_counts']) > 0.4:
+    if (count_ds[keys_lis[i]]['num_counts']) > 20 and (count_ds[keys_lis[i]]['perc_counts']) > 0.8:
         keys_proc.append(keys_lis[i])
 
 print(len(keys_lis), len(keys_proc))
 
-with open('keys_proc_20c_40p.pkl', 'wb') as f:
+with open('keys_proc_20c_80p.pkl', 'wb') as f:
     pkl.dump(keys_proc, f)
 
 '''
+20, 0.8: 1193 (0.067)
 20, 0.6: 3284 (0.184)
 20, 0.4: 5739 (0.322)
+20, 0.2: 8262 (0.464)
 '''

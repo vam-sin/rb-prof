@@ -8,8 +8,14 @@
 /src/models/regression/logs
 /src/models/regression/pr_figs
 /src/models/regression/loss_curves
+/src/models/regression/data_split
 /src/models/regression/slurm*
 /src/models/regression/__pycache__
 /src/models/__pycache__
 /src/feature_gen/__pycache__
+/src/feature_gen/DNABERT*
+/src/feature_gen/*.png
 /mmseqs
+/.vscode
+.gitignore
+/src/ds_proc/ds_counts.pkl
