@@ -9,7 +9,7 @@ import time
 import torch 
 from torch import nn, Tensor 
 import torch.nn.functional as F 
-from torch.nn import TransformerEncoder, TransformerEncoderLayer 
+from torch.nn import TransformerEncoder, TransformerEncoderLayer, TransformerDecoder, TransformerDecoderLayer 
 from tqdm import tqdm
 from scipy.stats import pearsonr, spearmanr
 from os import listdir
@@ -30,12 +30,7 @@ def process_sample(input_key, mult_factor):
     filename_ = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon_DNABERT/' + input_key + '.npz'
     # filename_ = '/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon/' + input_key
     arr = np.load(filename_, allow_pickle=True)['arr_0'].item()
-    # X = arr['feature_vec'][:,:15] # NT
-    X = arr['feature_vec_DNABERT'][:,15:783] # C-BERT
-    # X = arr['feature_vec'][:,:115] # NT + C
-    # X = arr['feature_vec'][:,115:1139] # T5
-    # X = arr['feature_vec'][:,:1139] # NT, C, T5
-    # X = arr['feature_vec'][:,1139:] # LRS
+    X = arr['feature_vec_DNABERT'][:,1807:] # LRS
     # X = arr['feature_vec_DNABERT'] # full
     y = np.absolute(arr['counts'])
 
@@ -44,50 +39,6 @@ def process_sample(input_key, mult_factor):
     y = y * mult_factor
 
     return X, y
-
-class TransformerModel(nn.Module):
-    def __init__(self, num_feats: int, d_model: int, nhead: int, d_hid: int,
-                nlayers: int,  mult_factor: float, dropout: float = 0.5):
-        super().__init__()
-        self.model_type = 'Transformer'
-        self.pos_encoder = PositionalEncoding(d_model, dropout)
-
-        '''Transformer Encoder Layer: Attn + FFN 
-        d_model: num_feats from input
-        nhead: num of multihead attention models
-        d_hid: dimension of the FFN
-        how many nts distance is the attention heads looking at.
-        '''
-        encoder_layers = TransformerEncoderLayer(d_model, nhead, d_hid, dropout)
-
-        # Transformer Encoder Model: made up on multiple encoder layers
-        self.transformer_encoder = TransformerEncoder(encoder_layers, nlayers)
-        self.encoder = nn.Linear(num_feats, d_model)
-        self.mult_factor = mult_factor
-        self.d_model = d_model 
-        self.decoder = nn.Linear(d_model, 1)
-        self.relu = nn.ReLU()
-        self.sigmoid = nn.Sigmoid()
-
-        self.init_weights()
-
-    def init_weights(self) -> None:
-        initrange = 0.1 
-        self.encoder.weight.data.uniform_(-initrange, initrange)
-        self.decoder.bias.data.zero_()
-        self.decoder.weight.data.uniform_(-initrange, initrange)
-
-    def forward(self, src: Tensor, src_mask: Tensor) -> Tensor:
-        src = self.encoder(src) * math.sqrt(self.d_model)
-        src = self.pos_encoder(src)
-        output = self.relu(self.transformer_encoder(src, src_mask))
-        output = self.decoder(output)
-        output = self.sigmoid(output) * self.mult_factor
- 
-        return output 
-
-def generate_square_subsequent_mask(sz: int) -> Tensor:
-    return torch.triu(torch.ones(sz, sz) * float('-inf'), diagonal=1)
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model: int, dropout: float = 0.1, max_len: int = 17000):
@@ -102,8 +53,69 @@ class PositionalEncoding(nn.Module):
         self.register_buffer('pe', pe)
 
     def forward(self, x: Tensor) -> Tensor:
-        x = x + self.pe[:x.size(0)]
-        return self.dropout(x)
+        # print(self.pe.shape, self.pe[:x.size(0)].shape)
+        # print(x, self.pe[:x.size(0)])
+        x = self.dropout(x + self.pe[:x.size(0)])
+        return x
+
+class TransformerModel(nn.Module):
+    def __init__(self, intoken, outtoken, nhead, hidden, enc_layers, dec_layers, dropout=0.1):
+        super(TransformerModel, self).__init__()
+
+        self.encoder = nn.Linear(intoken, hidden) 
+        self.pos_encoder = PositionalEncoding(hidden, dropout)
+
+        self.decoder = nn.Linear(outtoken, hidden)
+        self.pos_decoder = PositionalEncoding(hidden, dropout)
+
+        self.hidden = hidden
+
+        self.transformer = nn.Transformer(d_model = hidden, nhead = nhead, num_encoder_layers = enc_layers, num_decoder_layers = dec_layers, dim_feedforward = hidden, dropout=dropout, activation="relu")
+        self.fc_out = nn.Linear(hidden, outtoken)
+        self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
+
+        self.src_mask = None 
+        self.trg_mask = None 
+        self.memory_mask = None 
+
+        self.init_weights()
+
+    def init_weights(self) -> None:
+        initrange = 0.1 
+        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.encoder.bias.data.zero_()
+        self.decoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder.bias.data.zero_()
+    
+    def generate_square_subsequent_mask(self, sz):
+        mask = torch.triu(torch.ones(sz, sz), 1)
+        mask = mask.masked_fill(mask==1, float('-inf'))
+        # print(mask)
+        return mask 
+    
+    def make_len_mask(self, inp):
+        return (inp == 0).transpose(0, 1)
+
+    def forward(self, src, trg):
+        self.trg_mask = self.generate_square_subsequent_mask(len(trg)).to(trg.device)
+
+        src = self.relu(self.encoder(src)) * math.sqrt(self.hidden)
+        src = self.pos_encoder(src)
+        # print(src.shape)
+
+        trg = self.relu(self.decoder(trg)) * math.sqrt(self.hidden)
+        trg = self.pos_decoder(trg)
+        # print(trg.shape)
+
+        output = self.transformer(src, trg, tgt_mask = self.trg_mask)
+        # print(output.shape)
+        output = self.fc_out(output)
+        # print(output.shape)
+        output = self.sigmoid(output)
+        # print(output.shape)
+
+        return output
 
 def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger) -> None:
     print("Training")
@@ -114,16 +126,23 @@ def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_m
     pearson_corr_lis = []
     spearman_corr_lis = []
     for i in range(0, len(tr_train), bs):
+        
         a = torch.zeros((1,5)).to(device)
         loss = criterion(a,a)
+        optimizer.zero_grad()
+
         for b in range(i, min(i+bs, len(tr_train))):
             X, y = process_sample(tr_train[b], mult_factor)
             if len(X) < 10000: # not going to fit in gpu unless
                 seq_len = len(X)
                 x_in = torch.from_numpy(X).float().to(device)
-                src_mask = generate_square_subsequent_mask(seq_len).float().to(device)
-                y_pred = torch.flatten(model(x_in, src_mask))
-                y_true = torch.flatten(torch.from_numpy(y)).float().to(device)
+                # src_mask = generate_square_subsequent_mask(seq_len).float().to(device)
+                y_true = torch.from_numpy(np.expand_dims(y, axis=1)).float().to(device)
+                
+                y_pred = torch.squeeze(model(x_in, y_true), dim=1)
+                
+                y_true = torch.squeeze(y_true, dim=1)
+                # print(y_pred.shape, y_true.shape)
 
                 y_pred_imp_seq = []
                 y_true_imp_seq = []
@@ -133,22 +152,23 @@ def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_m
 
                 corr_p, _ = pearsonr(y_true_imp_seq, y_pred_imp_seq)
                 corr_s, _ = spearmanr(y_true_imp_seq, y_pred_imp_seq)
+                # print(y_pred_imp_seq)
                 
                 pearson_corr_lis.append(corr_p)
                 spearman_corr_lis.append(corr_s)
                 # print(corr_p, corr_s)
+                # print(y_pred.shape, y_true.shape)
                 
                 loss += criterion(y_pred, y_true) * loss_mult_factor # multiplying to make the loss bigger
 
                 # remove from GPU device
                 del x_in
-                del src_mask
+                # del src_mask
                 del y_true
                 del y_pred
                 gc.collect()
                 torch.cuda.empty_cache()
 
-        optimizer.zero_grad()
         loss.backward()
         # torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step()
@@ -158,6 +178,7 @@ def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_m
             logger.info(f'| samples trained: {i+1:5d} | train (intermediate) loss: {total_loss/(i+1):5.10f} | train (intermediate) pr: {np.mean(pearson_corr_lis):5.10f} | train (intermediate) sr: {np.mean(spearman_corr_lis):5.10f} |')
 
     logger.info(f'Epoch Train Loss: {total_loss/len(tr_train): 5.10f} | train pr: {np.mean(pearson_corr_lis):5.10f} | train sr: {np.mean(spearman_corr_lis):5.10f} |')
+
 
 def evaluate(model: nn.Module, tr_val, device, mult_factor, criterion, logger) -> float:
     print("Evaluating")
@@ -169,10 +190,13 @@ def evaluate(model: nn.Module, tr_val, device, mult_factor, criterion, logger) -
             X, y = process_sample(tr_val[i], mult_factor)
             if len(X) < 10000:
                 seq_len = len(X)
-                src_mask = generate_square_subsequent_mask(seq_len).to(device)
                 x_in = torch.from_numpy(X).float().to(device)
-                y_pred = torch.flatten(model(x_in, src_mask))
-                y_true = torch.flatten(torch.from_numpy(y)).to(device)
+                # src_mask = generate_square_subsequent_mask(seq_len).float().to(device)
+                y_true = torch.from_numpy(np.expand_dims(y, axis=1)).float().to(device)
+                
+                y_pred = torch.squeeze(model(x_in, y_true), dim=1)
+                
+                y_true = torch.squeeze(y_true, dim=1)
 
                 y_pred_imp_seq = []
                 y_true_imp_seq = []
@@ -188,7 +212,7 @@ def evaluate(model: nn.Module, tr_val, device, mult_factor, criterion, logger) -
                 total_loss += loss.item()
 
                 del x_in
-                del src_mask
+                # del src_mask
                 del y_pred
                 del y_true
                 del loss
