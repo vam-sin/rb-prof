@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name full_tf_LRS # Name for your job
+#SBATCH --job-name TF_FIX # Name for your job
 #SBATCH --ntasks 4              # Number of (cpu) tasks
-#SBATCH --time  1440         # Runtime in minutes.
+#SBATCH --time  3600         # Runtime in minutes.
 #SBATCH --mem 12000             # Reserve x GB RAM for the job
 #SBATCH --partition gpu         # Partition to submit
 #SBATCH --qos staff             # QOS

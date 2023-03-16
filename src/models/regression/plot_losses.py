@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt 
 import seaborn as sns
 
-f = open('slurm-564.out', 'r')
+f = open('slurm-1262.out', 'r')
 
 loss_vals = []
 loss_train = []
@@ -14,7 +14,7 @@ for line in f:
         epochs.append(num)
         num += 1
     if 'Epoch Train Loss' in line:
-        loss_train.append(float(line.split(' ')[11])/1e+6)
+        loss_train.append(float(line.split(' ')[11]))
         # epochs.append(num)
         # num += 1
 
@@ -24,7 +24,7 @@ sns.lineplot(x=epochs, y=loss_vals, label='Valid Loss', color='#f0932b')
 sns.lineplot(x=epochs, y=loss_train, label='Train Loss', color='#6ab04c')
 plt.legend()
 plt.show()
-plt.savefig("loss_curves/TF-Reg-Model-__2__0-losses.png", format="png")
+plt.savefig("loss_curves/bilstm-0.png", format="png")
 
 '''
 check the test loss as well

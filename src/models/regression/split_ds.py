@@ -7,7 +7,7 @@ import numpy as np
 random.seed(0)
 np.random.seed(0)
 
-with open('processed_keys/keys_proc_20c_60p.pkl', 'rb') as f:
+with open('processed_keys/keys_proc_20c_20p.pkl', 'rb') as f:
     onlyfiles = pkl.load(f)
 
 transcripts_ids = [x.replace('.npz','') for x in onlyfiles]
@@ -26,8 +26,8 @@ for i in range(len(transcripts_ids)):
 gene_ids_list_set = list(set(gene_ids_list))
 print(len(transcripts_ids), len(gene_ids_list))
 
-gene_train, gene_test = train_test_split(gene_ids_list_set, test_size=0.2, random_state=42, shuffle=True)
-gene_train, gene_val = train_test_split(gene_train, test_size=0.25, random_state=42, shuffle=True)
+gene_train, rest = train_test_split(gene_ids_list_set, test_size=0.2, random_state=42, shuffle=True)
+gene_val, gene_test = train_test_split(rest, test_size=0.5, random_state=42, shuffle=True)
 
 tr_train = []
 tr_val = []
@@ -48,11 +48,15 @@ for i in range(len(gene_test)):
 print(tr_train[0])
 print(len(tr_train), len(tr_val), len(tr_test))
 
-with open('data_split/train_20c_60p.pkl', 'wb') as f:
+with open('data_split/train_20c_20p.pkl', 'wb') as f:
     pkl.dump(tr_train, f)
 
-with open('data_split/val_20c_60p.pkl', 'wb') as f:
+with open('data_split/val_20c_20p.pkl', 'wb') as f:
     pkl.dump(tr_val, f)
 
-with open('data_split/test_20c_60p.pkl', 'wb') as f:
+with open('data_split/test_20c_20p.pkl', 'wb') as f:
     pkl.dump(tr_test, f)
+
+'''
+20c_20p was split in 80-10-10
+'''
