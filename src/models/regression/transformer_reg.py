@@ -20,7 +20,7 @@ import sys
 import logging
 import pickle as pkl
 
-saved_files_name = 'TF-Reg-Model-7'
+saved_files_name = 'TF-Reg-Model-8'
 log_file_name = 'logs/' + saved_files_name + '.log'
 model_file_name = 'reg_models/' + saved_files_name + '.pt'
 # more_model_file_name = 'reg_models/' + saved_files_name + '_MORE.pt'
@@ -42,19 +42,21 @@ np.random.seed(0)
 
 if __name__ == '__main__':
     # import data 
-    mult_factor = 1e+6
+    mult_factor = 1
     loss_mult_factor = 1
 
     print("Starting")
 
-    with open('data_split/train_20c_20p.pkl', 'rb') as f:
+    with open('data_split/train_20c_60p.pkl', 'rb') as f:
         tr_train = pkl.load(f)
+    tr_train.remove('ENSMUST00000060805.6')
+    tr_train.remove('ENSMUST00000000466.12')
     
-    with open('data_split/val_20c_20p.pkl', 'rb') as f:
+    with open('data_split/val_20c_60p.pkl', 'rb') as f:
         tr_val = pkl.load(f)
-    tr_val.remove('ENSMUST00000060805.6')
+    # tr_val.remove('ENSMUST00000060805.6')
     
-    with open('data_split/test_20c_20p.pkl', 'rb') as f:
+    with open('data_split/test_20c_60p.pkl', 'rb') as f:
         tr_test = pkl.load(f)
 
     logger.info(f'Train Set: {len(tr_train):5d} || Validation Set: {len(tr_val):5d} || Test Set: {len(tr_test): 5d}')
@@ -87,39 +89,39 @@ if __name__ == '__main__':
     # model.load_state_dict(torch.load(model_file_name))
 
     # Training Process
-    # for epoch in range(1, epochs + 1):
-    #     epoch_start_time = time.time()
+    for epoch in range(1, epochs + 1):
+        epoch_start_time = time.time()
         
-    #     logger.info(f'Training Epoch: {epoch:5d}')
-    #     curr_lr = scheduler.optimizer.param_groups[0]['lr']
-    #     logger.info(f'Learning Rate: {curr_lr: 2.10f}')
-    #     train(model, tr_train, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger)
+        logger.info(f'Training Epoch: {epoch:5d}')
+        curr_lr = scheduler.optimizer.param_groups[0]['lr']
+        logger.info(f'Learning Rate: {curr_lr: 2.10f}')
+        train(model, tr_train, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger)
 
-    #     logger.info("------------- Validation -------------")
-    #     val_loss = evaluate(model, tr_val, device, mult_factor, criterion, logger)
-    #     elapsed = time.time() - epoch_start_time
-    #     logger.info('-' * 89)
-    #     logger.info(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
-    #       f'valid loss {val_loss:5.10f}')
-    #     logger.info('-' * 89)
+        logger.info("------------- Validation -------------")
+        val_loss = evaluate(model, tr_val, device, mult_factor, criterion, logger)
+        elapsed = time.time() - epoch_start_time
+        logger.info('-' * 89)
+        logger.info(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
+          f'valid loss {val_loss:5.10f}')
+        logger.info('-' * 89)
 
-    #     if val_loss < best_val_loss:
-    #         best_val_loss = val_loss
-    #         best_model = copy.deepcopy(model)
-    #         logger.info("Best Model -- SAVING")
-    #         torch.save(model.state_dict(), model_file_name)
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            best_model = copy.deepcopy(model)
+            logger.info("Best Model -- SAVING")
+            torch.save(model.state_dict(), model_file_name)
         
-    #     logger.info(f'best val loss: {best_val_loss:5.10f}')
+        logger.info(f'best val loss: {best_val_loss:5.10f}')
 
-    #     logger.info("------------- Testing -------------")
-    #     test_loss = evaluate(model, tr_test, device, mult_factor, criterion, logger)
-    #     elapsed = time.time() - epoch_start_time
-    #     logger.info('-' * 89)
-    #     logger.info(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
-    #       f'test loss {test_loss:5.10f}')
-    #     logger.info('-' * 89)
+        logger.info("------------- Testing -------------")
+        test_loss = evaluate(model, tr_test, device, mult_factor, criterion, logger)
+        elapsed = time.time() - epoch_start_time
+        logger.info('-' * 89)
+        logger.info(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
+          f'test loss {test_loss:5.10f}')
+        logger.info('-' * 89)
 
-    #     scheduler.step(val_loss)
+        scheduler.step(val_loss)
 
     # Evaluation Metrics
     model.load_state_dict(torch.load(model_file_name))

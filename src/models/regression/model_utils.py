@@ -41,7 +41,7 @@ def process_sample(input_key, mult_factor):
 
     # count vectors
     # counts per million
-    y = y * mult_factor
+    y = y * 1e+6
 
     return X, y
 
@@ -82,7 +82,7 @@ class TransformerModel(nn.Module):
         src = self.pos_encoder(src)
         output = self.relu(self.transformer_encoder(src, src_mask))
         output = self.decoder(output)
-        output = self.sigmoid(output) * self.mult_factor
+        # output = self.sigmoid(output) * self.mult_factor
  
         return output 
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name bilstm-reg # Name for your job
+#SBATCH --job-name lstm-3 # Name for your job
 #SBATCH --ntasks 4              # Number of (cpu) tasks
 #SBATCH --time  3600         # Runtime in minutes.
 #SBATCH --mem 12000             # Reserve x GB RAM for the job

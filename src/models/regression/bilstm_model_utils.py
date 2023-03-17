@@ -19,144 +19,127 @@ import sys
 import logging
 import pickle as pkl
 from torch.autograd import Variable
+from torch.utils.data import Dataset, DataLoader
 
-def process_sample(input_key, mult_factor):
-    '''
-    conducts the processing of a single sample
-    1. loads the file
-    2. splits the file into X, and y
-    3. generates mask
-    4. returns all these
-    '''
-    filename_ = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon_DNABERT/' + input_key + '.npz.npz'
-    # filename_ = '/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon/' + input_key
-    arr = np.load(filename_, allow_pickle=True)['arr_0'].item()
-    # X = arr['feature_vec'][:,:15] # NT
-    # X = arr['feature_vec_DNABERT'][:,15:783] # C-BERT
-    # X = arr['feature_vec'][:,:115] # NT + C
-    # X = arr['feature_vec'][:,115:1139] # T5
-    # X = arr['feature_vec'][:,:1139] # NT, C, T5
-    # X = arr['feature_vec'][:,1139:] # LRS
-    # X = arr['feature_vec_DNABERT'] # full
-    X = arr['feature_vec_DNABERT'][:,:15]
-    y = np.absolute(arr['counts'])
+class RBDataset(Dataset):
+    def __init__(self, list_of_file_paths):
+        self.list_of_file_paths = list_of_file_paths
 
-    # count vectors
-    # counts per million
-    y = y * mult_factor
+    def __len__(self):
+        return len(self.list_of_file_paths)
+    
+    def __getitem__(self, index):
+        filename_ = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon_DNABERT/' + self.list_of_file_paths[index] + '.npz.npz'
+        # print(self.list_of_file_paths[index])
+        arr = np.load(filename_, allow_pickle=True)['arr_0'].item()
+        X = arr['feature_vec_DNABERT'][:,:15]
+        # print(X.shape)
+        
+        # print(codon_seq)
+        y = np.absolute(arr['counts']) * 1e+6
 
-    return X, y
+        # print(codon_seq.shape, y.shape)
+        
+        return X, y
 
 class BiLSTMModel(nn.Module):
-    def __init__(self, input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout, pad_idx):
+    def __init__(self, input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout):
         super().__init__()
 
+        # self.embedding = nn.Embedding(input_dim, embedding_dim)
         self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers = n_layers, bidirectional = bidirectional, dropout = dropout if n_layers > 1 else 0, batch_first=True)
-        self.fc = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, output_dim)
+        self.fc1 = nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, 128)
+        self.fc = nn.Linear(128, output_dim)
+        self.bidirectional = bidirectional
         self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
         self.dropout = nn.Dropout(dropout)
         self.sigmoid = nn.Sigmoid()
+        self.relu = nn.ReLU()
 
     def forward(self, src):
-        h_0 = Variable(torch.zeros(1, 1, self.hidden_dim).cuda()) # (1, bs, hidden)
-        c_0 = Variable(torch.zeros(1, 1, self.hidden_dim).cuda()) # (1, bs, hidden)
+        # src = self.embedding(src)
+        h_0 = Variable(torch.zeros(self.n_layers * 2 if self.bidirectional else self.n_layers, 1, self.hidden_dim).cuda()) # (1, bs, hidden)
+        c_0 = Variable(torch.zeros(self.n_layers * 2 if self.bidirectional else self.n_layers, 1, self.hidden_dim).cuda()) # (1, bs, hidden)
         outputs, (final_hidden, final_cell) = self.lstm(src, (h_0, c_0))
-        # print(outputs.shape, final_hidden.shape, final_cell.shape)
-        x = self.fc(outputs)
-        x = self.sigmoid(x)
-        # print(x.shape)
+        x = self.relu(outputs)
+        x = self.fc1(x)
+        x = self.relu(x)
+        x = self.fc(x)
+        # x = self.sigmoid(x)
 
         return x
 
-def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger) -> None:
+def train(model: nn.Module, train_dataloder, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger) -> None:
     print("Training")
     model.train()
     total_loss = 0. 
-    log_interval = 100
-    start_time = time.time() 
     pearson_corr_lis = []
     spearman_corr_lis = []
-    for i in range(0, len(tr_train), bs):
-        model.zero_grad(set_to_none=True)
-        a = torch.zeros((1,5)).to(device)
-        loss = criterion(a,a)
-        for b in range(i, min(i+bs, len(tr_train))):
-            X, y = process_sample(tr_train[b], mult_factor)
-            if len(X) < 10000: # not going to fit in gpu unless
-                seq_len = len(X)
-                x_in = torch.from_numpy(X).float().to(device)
-                x_in = torch.unsqueeze(x_in, 0)
+    for i, data in enumerate(train_dataloder):
+        optimizer.zero_grad()
+        inputs, labels = data
+        inputs = inputs.float().to(device)
+        # inputs = torch.unsqueeze(inputs, 2)
+        # print(inputs.shape, labels.shape)
 
-                y_pred = model(x_in)
-                y_pred = torch.squeeze(y_pred, 0)
-                y_pred = torch.squeeze(y_pred, 1)
-                y_true = torch.flatten(torch.from_numpy(y)).float().to(device)
+        labels = labels.float().to(device)
+        labels = torch.squeeze(labels, 0)
+        
+        outputs = model(inputs)
+        outputs = torch.squeeze(outputs, 0)
+        outputs = torch.squeeze(outputs, 1)
+        
+        loss = criterion(outputs, labels)
 
-                y_pred_det = y_pred.cpu().detach().numpy()
-
-                corr_p, _ = pearsonr(y, y_pred_det)
-                corr_s, _ = spearmanr(y, y_pred_det)
-                
-                pearson_corr_lis.append(corr_p)
-                spearman_corr_lis.append(corr_s)
-                
-                loss += criterion(y_pred, y_true) * loss_mult_factor # multiplying to make the loss bigger
-
-                # remove from GPU device
-                del x_in
-                # del src_mask
-                del y_true
-                del y_pred
-                gc.collect()
-                torch.cuda.empty_cache()
-                
         loss.backward()
         optimizer.step()
-        total_loss += loss.item()
+        total_loss += loss.item() * loss_mult_factor
 
-        if (i) % (bs) == 0:
+        y_pred_det = outputs.cpu().detach().numpy()
+        y_true_det = labels.cpu().detach().numpy()
+
+        corr_p, _ = pearsonr(y_true_det, y_pred_det)
+        corr_s, _ = spearmanr(y_true_det, y_pred_det)
+        
+        pearson_corr_lis.append(corr_p)
+        spearman_corr_lis.append(corr_s)
+
+        if (i) % (bs*50) == 0:
             logger.info(f'| samples trained: {i+1:5d} | train (intermediate) loss: {total_loss/(i+1):5.10f} | train (intermediate) pr: {np.mean(pearson_corr_lis):5.10f} | train (intermediate) sr: {np.mean(spearman_corr_lis):5.10f} |')
+        
+    logger.info(f'Epoch Train Loss: {total_loss/len(train_dataloder): 5.10f} | train pr: {np.mean(pearson_corr_lis):5.10f} | train sr: {np.mean(spearman_corr_lis):5.10f} |')
 
-    logger.info(f'Epoch Train Loss: {total_loss/len(tr_train): 5.10f} | train pr: {np.mean(pearson_corr_lis):5.10f} | train sr: {np.mean(spearman_corr_lis):5.10f} |')
-
-def evaluate(model: nn.Module, tr_val, device, mult_factor, criterion, logger) -> float:
+def evaluate(model: nn.Module, val_dataloader, device, mult_factor, loss_mult_factor, criterion, logger) -> float:
     print("Evaluating")
     model.eval()
-    total_loss = 0 
+    total_loss = 0. 
     corr_lis = []
     with torch.no_grad():
-        for i in range(len(tr_val)):
-            X, y = process_sample(tr_val[i], mult_factor)
-            if len(X) < 10000:
-                seq_len = len(X)
-                x_in = torch.from_numpy(X).float().to(device)
-                x_in = torch.unsqueeze(x_in, 0)
+        for i, data in enumerate(val_dataloader):
+            inputs, labels = data
+            inputs = inputs.float().to(device)
+            # inputs = torch.unsqueeze(inputs, 2)
+            # print(inputs.shape, labels.shape)
 
-                y_pred = model(x_in)
-                y_pred = torch.squeeze(y_pred, 0)
-                y_pred = torch.squeeze(y_pred, 1)
-                y_true = torch.flatten(torch.from_numpy(y)).float().to(device)
+            labels = labels.float().to(device)
+            labels = torch.squeeze(labels, 0)
+            
+            outputs = model(inputs)
+            outputs = torch.squeeze(outputs, 0)
+            outputs = torch.squeeze(outputs, 1)
+            
+            loss = criterion(outputs, labels)
 
-                y_pred_det = y_pred.cpu().detach().numpy()
+            total_loss += loss.item()
 
-                corr_p, _ = pearsonr(y, y_pred_det)
-                
-                corr_lis.append(corr_p)
+            y_pred_det = outputs.cpu().detach().numpy()
+            y_true_det = labels.cpu().detach().numpy()
 
-                loss = criterion(y_pred, y_true) * 1e+6
-                # print(loss.item(), corr)
-
-                total_loss += loss.item()
-
-                del x_in
-                # del src_mask
-                del y_pred
-                del y_true
-                del loss
-                
-                gc.collect()
-                torch.cuda.empty_cache()
+            corr_p, _ = pearsonr(y_true_det, y_pred_det)
+            
+            corr_lis.append(corr_p)
 
     logger.info(f'| PR: {np.mean(corr_lis):5.5f} |')
 
-    return total_loss / (len(tr_val) - 1)
+    return total_loss / (len(val_dataloader) - 1)
