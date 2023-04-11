@@ -7,13 +7,16 @@ import random
 import seaborn as sns
 import torch 
 from torch import nn
-from models.regression.full_tf_model_utils import process_sample, TransformerModel
+from full_ds_bilstm_model_utils import RBDataset, BiLSTMModel
+from torch.nn import TransformerEncoder, TransformerEncoderLayer 
+from full_ds_tf_enc_model_utils import TransformerModel, train, evaluate, RBDataset, generate_square_subsequent_mask
 from scipy.stats import pearsonr
 from os import listdir
 from os.path import isfile, join
 import sys
 import logging
 import matplotlib.pyplot as plt
+from torch.utils.data import Dataset, DataLoader
 
 # plotting setup
 sns.set_style("ticks")
@@ -36,7 +39,7 @@ np.random.seed(0)
 
 mult_factor = 1
 
-def eval_pr(model: nn.Module, tr_val_key) -> float:
+def eval_pr(model: nn.Module, test_dataloader) -> float:
     # print("Evaluating")
     model.eval()
     total_loss = 0 
@@ -44,36 +47,34 @@ def eval_pr(model: nn.Module, tr_val_key) -> float:
     len_lis = []
     with torch.no_grad():
         # print(i, tr_val[i])
-        X, y = process_sample(tr_val_key, mult_factor)
-        # print(X.shape)
-        seq_len = len(X)
+        inputs, labels = next(iter(test_dataloader))
+        inputs = inputs.float().to(device)
+        # inputs = torch.unsqueeze(inputs, 2)
+        # print(inputs.shape, labels.shape)
+
+        labels = labels.float().to(device)
+        labels = torch.squeeze(labels, 0)
         
-        # src_mask = generate_square_subsequent_mask(seq_len).to(device)
-        # print(src_mask.shape)
-        x_in = torch.from_numpy(X).float().to(device)
-        # src_mask = generate_square_subsequent_mask(seq_len).float().to(device)
-        y_true = torch.from_numpy(np.expand_dims(y, axis=1)).float().to(device)
-        y_pred = torch.squeeze(model(x_in, y_true), dim=1)
-        y_true = torch.squeeze(y_true, dim=1)
+        outputs = model(inputs)
+        outputs = torch.squeeze(outputs, 0)
+        outputs = torch.squeeze(outputs, 1)
+        
+        loss = criterion(outputs, labels)
 
-        loss = criterion(y_pred, y_true)
+        total_loss += loss.item()
 
-        y_pred_imp_seq = []
-        y_true_imp_seq = []
-        for x in range(len(y_pred.cpu().detach().numpy())):
-            # if y_true[x].item() != 0:
-            y_pred_imp_seq.append(y_pred[x].item())
-            y_true_imp_seq.append(y_true[x].item())
+        y_pred_det = outputs.cpu().detach().numpy()
+        y_true_det = labels.cpu().detach().numpy()
 
-        corr, _ = pearsonr(y_true_imp_seq, y_pred_imp_seq) # y axis is predictions, x axis is true value
-        for k in range(len(y_true_imp_seq)):
+        corr_p, _ = pearsonr(y_true_det, y_pred_det) # y axis is predictions, x axis is true value
+        for k in range(len(y_true_det)):
             len_lis.append(k)
-            print(k, y_true_imp_seq[k], y_pred_imp_seq[k])
+            print(k, y_true_det[k], y_pred_det[k])
         
-        logging.info(f'Corr: {corr:3.5f}')
+        logging.info(f'Corr: {corr_p:3.5f}')
         logging.info(f'Loss: {loss:3.5f}')
-        y_pred_imp_seq_neg = [(-1*x)-0.001 for x in y_pred_imp_seq]
-        y_true_imp_seq = [(x)+0.001 for x in y_true_imp_seq]
+        y_pred_imp_seq_neg = [(-1*x)-0.001 for x in y_pred_det]
+        y_true_imp_seq = [(x)+0.001 for x in y_true_det]
         
         df = pd.DataFrame({'Predicted':y_pred_imp_seq_neg,'True':y_true_imp_seq})
         g = sns.lineplot(data = df, palette = ['#F2AA4C', '#101820'], dashes=False)
@@ -85,33 +86,75 @@ def eval_pr(model: nn.Module, tr_val_key) -> float:
         g.tick_params(bottom=False, left=False)  # remove the ticks
         plt.legend()
         plt.show()
-        plt.savefig("pr_figs/TF-Reg-Model-FULL_0/" + tr_val_key + ".png", format="png")
+        plt.savefig("pr_figs/FULLDS_BiLSTM-1/test_0.png", format="png")
+
+def print_preds(model: nn.Module, test_dataloader) -> float:
+    # print("Evaluating")
+    model.eval()
+    total_loss = 0 
+    corr_lis = []
+    len_lis = []
+    with torch.no_grad():
+        # print(i, tr_val[i])
+        inputs, labels = next(iter(test_dataloader))
+        src_mask = generate_square_subsequent_mask(inputs.shape[1]).float().to(device)
+        inputs = inputs.float().to(device)
+        inputs = torch.squeeze(inputs, 0)
+        # inputs = torch.unsqueeze(inputs, 2)
+        # print(inputs.shape, labels.shape)
+
+        labels = labels.float().to(device)
+        labels = torch.squeeze(labels, 0)
+        
+        outputs = model(inputs, src_mask)
+        outputs = torch.squeeze(outputs, 0)
+        outputs = torch.squeeze(outputs, 1)
+        
+        loss = criterion(outputs, labels)
+
+        total_loss += loss.item()
+
+        y_pred_det = outputs.cpu().detach().numpy()
+        y_true_det = labels.cpu().detach().numpy()
+
+        corr_p, _ = pearsonr(y_true_det, y_pred_det) # y axis is predictions, x axis is true value
+        for k in range(len(y_true_det)):
+            len_lis.append(k)
+            print(k, y_true_det[k], y_pred_det[k])
 
 if __name__ == '__main__':
     # import data 
-    with open('processed_keys/keys_proc_20c_60p.pkl', 'rb') as f:
-        onlyfiles = pkl.load(f)
-    print("Total Number of Samples: ", len(onlyfiles))
+    mypath = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/test'
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    test_files = [mypath + '/' + f for f in onlyfiles]
 
-    print("---- Dataset Processing ----")
-    tr_train, tr_test = train_test_split(onlyfiles, test_size=0.2, random_state=42, shuffle=True)
-    tr_train, tr_val = train_test_split(tr_train, test_size=0.25, random_state=42, shuffle=True)
-
-    print("Train Set: ", len(tr_train), "|| Validation Set: ", len(tr_val), "|| Test Set: " , len(tr_test))
+    test_data = RBDataset(test_files)
+    bs = 1
+    test_dataloader = DataLoader(test_data, batch_size=bs, shuffle=True) 
+    print("Total Number of Test Samples: ", len(test_dataloader))
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # device = torch.device('cpu')
     print("Device: ", device)
 
-    intoken = 1903 # input features
-    outtoken = 1 # output 
-    hidden = 256 # hidden layer size
-    enc_layers = 3 # number of encoder layers
-    dec_layers = 3 # number of decoder layers
-    nhead = 8 # number of attention heads
-    dropout = 0.1
-    bs = 16 # batch_size
-    model = TransformerModel(intoken, outtoken, nhead, hidden, enc_layers, dec_layers, dropout).to(device)
+    # Bi-LSTM
+    # input_dim = 803
+    # embedding_dim = 64
+    # hidden_dim = 256
+    # output_dim = 1
+    # n_layers = 4
+    # bidirectional = True
+    # dropout = 0.4
+    # model = BiLSTMModel(input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout).to(device)
+
+    # Transformer
+    num_feats = 803 # new DNABERT features
+    emsize = 256 # d_inner
+    d_hid = 256 # hidden_size
+    nlayers = 2 # number of transformer layers
+    nhead = 4 # number of attention heads
+    dropout = 0.2
+    model = TransformerModel(num_feats, emsize, nhead, d_hid, nlayers, mult_factor, dropout).to(device)
     model = model.to(torch.float)
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     logger.info(pytorch_total_params)
@@ -123,12 +166,12 @@ if __name__ == '__main__':
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 10, factor=0.1, verbose=True)
 
     # Evaluation Metrics
-    model.load_state_dict(torch.load('reg_models/TF-Reg-Model-FULL_0.pt'))
+    model.load_state_dict(torch.load('reg_models/Full_DS_TFenc-0.pt'))
     model.eval()
     with torch.no_grad():
         print("------------- Validation -------------")
         f = 4
-        eval_pr(model, tr_test[10 * f])
+        print_preds(model, test_dataloader)
 
 
 '''

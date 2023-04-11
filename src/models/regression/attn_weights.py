@@ -11,7 +11,7 @@ import pandas as pd
 from torch import nn, Tensor 
 import torch.nn.functional as F 
 from torch.nn import TransformerEncoder, TransformerEncoderLayer 
-from full_tf_model_utils import TransformerModel, train, evaluate, process_sample
+from models.regression.tf_all_model_utils import TransformerModel, train, evaluate, process_sample
 from tqdm import tqdm
 from scipy.stats import pearsonr, spearmanr
 from os import listdir

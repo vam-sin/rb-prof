@@ -21,7 +21,7 @@ import logging
 import pickle as pkl
 from torch.utils.data import Dataset, DataLoader
 
-saved_files_name = 'BiLSTM-Reg-3'
+saved_files_name = 'BiLSTM-Reg-9'
 log_file_name = 'logs/' + saved_files_name + '.log'
 model_file_name = 'reg_models/' + saved_files_name + '.pt'
 # more_model_file_name = 'reg_models/' + saved_files_name + '_MORE.pt'
@@ -77,11 +77,11 @@ if __name__ == '__main__':
     # device = torch.device('cpu')
     print("Device: ", device)
 
-    input_dim = 15
+    input_dim = 783
     embedding_dim = 64
     hidden_dim = 128
     output_dim = 1
-    n_layers = 4
+    n_layers = 2
     bidirectional = True
     dropout = 0.2
     model = BiLSTMModel(input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout).to(device)
@@ -94,7 +94,9 @@ if __name__ == '__main__':
     lr = 1e-4
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # optimizer = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9)
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 100, factor=0.1, verbose=True)
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 50, factor=0.1, verbose=True)
+    early_stopping_patience = 100
+    trigger_times = 0
 
     best_val_loss = float('inf')
     epochs = 5000
@@ -136,6 +138,17 @@ if __name__ == '__main__':
 
         scheduler.step(val_loss)
 
+        # early stopping criterion
+        if val_loss > best_val_loss:
+          trigger_times += 1
+          logger.info(f'| Trigger Times: {trigger_times:4d} |')
+          if trigger_times >= early_stopping_patience:
+            logger.info('------------- Early Stoppping -------------')
+            break 
+        else:
+          trigger_times = 0
+          logger.info(f'| Trigger Times: {trigger_times:4d} |')
+
     # Evaluation Metrics
     model.load_state_dict(torch.load(model_file_name))
     model.eval()
@@ -151,24 +164,6 @@ if __name__ == '__main__':
         print('-' * 89)
         print(f'test loss {test_loss:5.10f}')
         print('-' * 89)
-
-'''
-MSE Loss: the derivative would be getting really small considering that the values to be predicted are very small and so the mult factor should be very big
-MAE Loss could be bigger than the MSE, this is a possible option.
-Loss functions:
-iXnos and RiboMIMO both use MSE as the loss
-ROSE uses NLL (negative log likelihood)
-need to find a loss that weights higher differences more and smaller differences, not much (check SmootL1Loss or HingeLoss)
-'''
-
-'''
-0: MSE Loss: 
-1: MSE Loss with the proper division of sequence length
-CodonBS_2: MSE Loss with proper div of length and predicts counts per million
-CodonBS_3: Huber Loss (delta 0.1) with proper division of length (no mult factors)
-CodonBS_4: Huber Loss (delta 0.1) with proper division of length (no mult factors) + (20, 0.6: Dataset Proc) + Added Zeros
-CodonBS_5: MSE Loss (1e+6 mult factor) + (20, 0.6: Dataset Proc) + Added Zeros
-'''
 
 '''
 bilstm-sorta working?

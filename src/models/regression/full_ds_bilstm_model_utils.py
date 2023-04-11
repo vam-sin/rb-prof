@@ -17,39 +17,78 @@ from os.path import isfile, join
 import math
 import sys
 import logging
-import pickle as pkl
+import pickle as pkl 
 from torch.autograd import Variable
 from torch.utils.data import Dataset, DataLoader
+from torch.nn import MultiheadAttention
 
 class RBDataset(Dataset):
     def __init__(self, list_of_file_paths):
         self.list_of_file_paths = list_of_file_paths
+        self.max_len = 10000
 
     def __len__(self):
         return len(self.list_of_file_paths)
     
     def __getitem__(self, index):
-        filename_ = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon_DNABERT/' + self.list_of_file_paths[index] + '.npz.npz'
-        # print(self.list_of_file_paths[index])
-        arr = np.load(filename_, allow_pickle=True)['arr_0'].item()
-        # X = arr['feature_vec_DNABERT'][:,:15]
-        # X = arr['feature_vec_DNABERT'] # full
-        # X = arr['feature_vec_DNABERT'][:,15:783] # C-BERT
-        X = arr['feature_vec_DNABERT'][:,:783] # NT + C-BERT
-        # X = arr['feature_vec_DNABERT'][:,:1807] # NT + C-BERT + T5
-        # X = arr['feature_vec_DNABERT'][:,783:1807] # T5
-        # X = arr['feature_vec_DNABERT'][:,1807:] # LRS
-        # print(X.shape)
+        with open(self.list_of_file_paths[index], 'rb') as f:
+            data_dict = pkl.load(f)
         
-        # print(codon_seq)
-        y = np.absolute(arr['counts']) * 1e+6
+        X_pad = np.zeros((self.max_len, 803))
+        X = np.asarray(data_dict['X'])
+        X_pad[:X.shape[0], :] = X
 
-        # print(codon_seq.shape, y.shape)
+        y_pad = np.empty(self.max_len)
+        y_pad.fill(-1)
+        y = np.absolute(data_dict['y']) * 1e+6
+        y_pad[:y.shape[0]] = y
+        # print(X_pad.shape, y_pad.shape)
+        # print(X.shape, y.shape)
+        
+        return X_pad, y_pad, len(X)
+
+class RBDataset_NoBS(Dataset):
+    def __init__(self, list_of_file_paths):
+        self.list_of_file_paths = list_of_file_paths
+        self.max_len = 10000
+
+    def __len__(self):
+        return len(self.list_of_file_paths)
+    
+    def __getitem__(self, index):
+        with open(self.list_of_file_paths[index], 'rb') as f:
+            data_dict = pkl.load(f)
+        
+        X = np.asarray(data_dict['X'])
+        y = np.absolute(data_dict['y']) * 1e+6
+        # print(X_pad.shape, y_pad.shape)
+        # print(X.shape, y.shape)
         
         return X, y
 
+class RBDataset_NoBS_withGene(Dataset):
+    def __init__(self, list_of_file_paths):
+        self.list_of_file_paths = list_of_file_paths
+        self.max_len = 10000
+
+    def __len__(self):
+        return len(self.list_of_file_paths)
+    
+    def __getitem__(self, index):
+        with open(self.list_of_file_paths[index], 'rb') as f:
+            data_dict = pkl.load(f)
+        # print(data_dict.keys())
+        
+        X = np.asarray(data_dict['X'])
+        y = np.absolute(data_dict['y']) * 1e+6
+        gene = data_dict['gene']
+        # print(X_pad.shape, y_pad.shape)
+        # print(X.shape, y.shape)
+        
+        return X, y, self.list_of_file_paths[index].split('/')[-1].split('_')[0], gene, self.list_of_file_paths[index].split('/')[-1]
+
 class BiLSTMModel(nn.Module):
-    def __init__(self, input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout):
+    def __init__(self, input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout, bs):
         super().__init__()
 
         # self.embedding = nn.Embedding(input_dim, embedding_dim)
@@ -58,23 +97,22 @@ class BiLSTMModel(nn.Module):
         self.fc = nn.Linear(128, output_dim)
         self.bidirectional = bidirectional
         self.hidden_dim = hidden_dim
+        self.bs = bs
         self.n_layers = n_layers
         self.dropout = nn.Dropout(dropout)
         self.sigmoid = nn.Sigmoid()
         self.relu = nn.ReLU()
+        # self.attn = MultiheadAttention(embed_dim=hidden_dim * 2 if bidirectional else hidden_dim, num_heads=4, dropout=dropout)
 
         self.linear_layers2 = nn.Sequential(
             nn.Linear(hidden_dim * 2 if bidirectional else hidden_dim, 256),
             nn.ReLU(),
-            nn.BatchNorm1d(256),
             nn.Dropout(dropout),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.BatchNorm1d(128),
             nn.Dropout(dropout),
             nn.Linear(128, 64),
             nn.ReLU(),
-            nn.BatchNorm1d(64),
             nn.Dropout(dropout),
             nn.Linear(64, output_dim),
             nn.ReLU()
@@ -84,13 +122,15 @@ class BiLSTMModel(nn.Module):
 
     def forward(self, src):
         # src = self.embedding(src)
-        h_0 = Variable(torch.zeros(self.n_layers * 2 if self.bidirectional else self.n_layers, 1, self.hidden_dim).cuda()) # (1, bs, hidden)
-        c_0 = Variable(torch.zeros(self.n_layers * 2 if self.bidirectional else self.n_layers, 1, self.hidden_dim).cuda()) # (1, bs, hidden)
+        h_0 = Variable(torch.zeros(self.n_layers * 2 if self.bidirectional else self.n_layers, self.bs, self.hidden_dim).cuda()) # (1, bs, hidden)
+        c_0 = Variable(torch.zeros(self.n_layers * 2 if self.bidirectional else self.n_layers, self.bs, self.hidden_dim).cuda()) # (1, bs, hidden)
         outputs, (final_hidden, final_cell) = self.lstm(src, (h_0, c_0))
         # attn_output, attn_mat = self.attention_layer(outputs, outputs, outputs)
         # print(attn_output.shape, attn_mat.shape)
+        # outputs, attn_mat = self.attn(outputs, outputs, outputs)
 
         x = self.relu(outputs)
+        # x = self.linear_layers2(x)
         x = self.fc1(x)
         x = self.relu(x)
         x = self.dropout(x)

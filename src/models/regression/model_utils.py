@@ -30,13 +30,13 @@ def process_sample(input_key, mult_factor):
     filename_ = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon_DNABERT/' + input_key + '.npz.npz'
     # filename_ = '/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_proper/seq_annot_final/final_dataset_codon/' + input_key
     arr = np.load(filename_, allow_pickle=True)['arr_0'].item()
-    # X = arr['feature_vec'][:,:15] # NT
+    X = arr['feature_vec_DNABERT'][:,:15] # NT
     # X = arr['feature_vec_DNABERT'][:,15:783] # C-BERT
     # X = arr['feature_vec'][:,:115] # NT + C
     # X = arr['feature_vec'][:,115:1139] # T5
     # X = arr['feature_vec'][:,:1139] # NT, C, T5
     # X = arr['feature_vec'][:,1139:] # LRS
-    X = arr['feature_vec_DNABERT'] # full
+    # X = arr['feature_vec_DNABERT'] # full
     y = np.absolute(arr['counts'])
 
     # count vectors
@@ -65,23 +65,27 @@ class TransformerModel(nn.Module):
         self.encoder = nn.Linear(num_feats, d_model)
         self.mult_factor = mult_factor
         self.d_model = d_model 
-        self.decoder = nn.Linear(d_model, 1)
+        self.decoder1 = nn.Linear(d_model, 128)
+        self.fc = nn.Linear(128, 1)
         self.relu = nn.ReLU()
         self.sigmoid = nn.Sigmoid()
+        self.dropout = nn.Dropout(p=dropout)
 
         self.init_weights()
 
     def init_weights(self) -> None:
         initrange = 0.1 
         self.encoder.weight.data.uniform_(-initrange, initrange)
-        self.decoder.bias.data.zero_()
-        self.decoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder1.bias.data.zero_()
+        self.decoder1.weight.data.uniform_(-initrange, initrange)
 
     def forward(self, src: Tensor, src_mask: Tensor) -> Tensor:
         src = self.encoder(src) * math.sqrt(self.d_model)
         src = self.pos_encoder(src)
         output = self.relu(self.transformer_encoder(src, src_mask))
-        output = self.decoder(output)
+        output = self.decoder1(output)
+        output = self.dropout(self.relu(output))
+        output = self.fc(output)
         # output = self.sigmoid(output) * self.mult_factor
  
         return output 
@@ -154,7 +158,7 @@ def train(model: nn.Module, tr_train, bs, device, criterion, mult_factor, loss_m
         optimizer.step()
         total_loss += loss.item()
         # print(i+1)
-        if (i) % (bs) == 0:
+        if (i) % (bs*50) == 0:
             logger.info(f'| samples trained: {i+1:5d} | train (intermediate) loss: {total_loss/(i+1):5.10f} | train (intermediate) pr: {np.mean(pearson_corr_lis):5.10f} | train (intermediate) sr: {np.mean(spearman_corr_lis):5.10f} |')
 
     logger.info(f'Epoch Train Loss: {total_loss/len(tr_train): 5.10f} | train pr: {np.mean(pearson_corr_lis):5.10f} | train sr: {np.mean(spearman_corr_lis):5.10f} |')
