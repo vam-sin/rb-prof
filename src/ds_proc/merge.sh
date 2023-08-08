@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name ds_proc # Name for your job
+#SBATCH --job-name leu_ile_merge # Name for your job
 #SBATCH --ntasks 4              # Number of (cpu) tasks
 #SBATCH --time  240           # Runtime in minutes.
 #SBATCH --mem 12000             # Reserve x GB RAM for the job

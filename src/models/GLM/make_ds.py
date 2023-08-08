@@ -12,7 +12,7 @@ random.seed(0)
 np.random.seed(0)
 
 # import data files
-with open('../regression/processed_keys/keys_proc_20c_60p.pkl', 'rb') as f:
+with open('../regression/processed_keys/keys_proc_20c_20p.pkl', 'rb') as f:
     onlyfiles = pkl.load(f)
 
 only_files_tr = []
@@ -34,7 +34,7 @@ ds.columns = ["index", "gene", "transcript", "position_A_site", "counts"]
 print(ds)
 
 # train_ds
-for i in range(len(tr_test)):
+for i in range(len(tr_train)):
     print(i, len(tr_test))
     ds_tr = ds[ds["transcript"].isin([tr_test[i]])]
     if len(ds_tr.index) != 0:

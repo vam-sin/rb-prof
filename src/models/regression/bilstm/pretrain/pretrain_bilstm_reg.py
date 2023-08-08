@@ -5,25 +5,57 @@ import copy
 import time
 import torch 
 from torch import nn
-from model_utils import TransformerModel, validation, RBDataset_NoBS, evaluate, train
+from model_utils import BiLSTMModel, train, evaluate, RBDataset_NoBS
 from os import listdir
 from os.path import isfile, join
 import sys
 import logging
 from torch.utils.data import DataLoader
 from torchmetrics import PearsonCorrCoef
+import argparse
+import wandb
 
-# no af2 data
-no_af2_transcripts = ['ENSMUST00000110336.3', 'ENSMUST00000049149.14', 'ENSMUST00000114036.8', 'ENSMUST00000092956.2', 'ENSMUST00000028829.12', 'ENSMUST00000021471.12']
+# hyperparameters
+lr = 1e-4
+architecture = 'BiLSTM'
+dataset_name = 'MIMO'
+feature_list = ['nt', 'cbert', 'conds']
+feature_string = '_'.join(feature_list)
+loss_func_name = 'PCCLoss'
+epochs = 200
+bs = 1
+saved_files_name = 'B-0-MIMOPretrain-NT_CBERT-BS1-PCCLoss'
 
-saved_files_name = 'TF-0-DS04-CEmbed-CTRLFixConds_SpTokens_BS01-PCCLoss'
+# start a new wandb run to track this script
+wandb.init(
+    # set the wandb project where this run will be logged
+    project="rb-prof",
+
+    # name the run
+    name = saved_files_name,
+    
+    # track hyperparameters and run metadata
+    config={
+    "learning_rate": lr,
+    "architecture": architecture,
+    "features": feature_string,
+    "dataset": dataset_name,
+    "epochs": epochs,
+    "batch_size": bs,
+    "loss": loss_func_name
+    }
+)
+
 log_file_name = 'logs/' + saved_files_name + '.log'
 model_file_name = 'reg_models/' + saved_files_name + '.pt'
 
-def init_weights(m):
-    if isinstance(m, nn.Linear):
-        torch.nn.init.xavier_uniform(m.weight)
-        m.bias.data.fill_(0.01)
+class PCCLoss(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.pcc_l = PearsonCorrCoef().to(torch.device('cuda'))
+        
+    def forward(self, pred, actual):
+        return -1 * self.pcc_l(pred, actual)
 
 # logging setup
 logger = logging.getLogger('')
@@ -37,26 +69,27 @@ logger.addHandler(fh)
 logger.addHandler(sh)
 
 # reproducibility
-random.seed(42)
-np.random.seed(42)
-torch.manual_seed(42)
+random.seed(0)
+np.random.seed(0)
+torch.manual_seed(0)
 
-# PCC Loss
-class PCCLoss(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.pcc_l = PearsonCorrCoef().to(torch.device('cuda'))
-        
-    def forward(self, pred, actual):
-        return -1 * self.pcc_l(pred, actual)
+def init_weights(model):
+    for m in model.modules():
+        if isinstance(m, nn.Embedding):
+            torch.nn.init.xavier_uniform(m.weight)
+        if isinstance(m, nn.LSTM):
+            torch.nn.init.xavier_uniform(m.weight_ih_l0)
+            torch.nn.init.orthogonal(m.weight_hh_l0)
+            torch.nn.init.xavier_uniform(m.weight_ih_l0_reverse)
+            torch.nn.init.orthogonal(m.weight_hh_l0_reverse)
+        if isinstance(m, nn.Linear):
+            torch.nn.init.xavier_uniform(m.weight)
+            m.bias.data.fill_(0.01)
 
 if __name__ == '__main__':
     # import data 
     mult_factor = 1
     loss_mult_factor = 1
-    bs = 1 # batch_size
-    dataset_name = 'DS04'
-    feature_list = ['nt', 'cbert', 'conds']
 
     # input size
     input_size = 0
@@ -70,28 +103,39 @@ if __name__ == '__main__':
         input_size += 1024
     if 'lem' in feature_list:
         input_size += 15
+    if 'AF2-SS' in feature_list:
+        input_size += 5
+    if 'mlm_cdna_nt_idai' in feature_list:
+        input_size += 7680
+    if 'mlm_cdna_nt_pbert' in feature_list:
+        input_size += 1536
+    if 'cembeds' in feature_list:
+        input_size += 256
+    if 'geom' in feature_list:
+        input_size += 8
 
-    if dataset_name == 'DS06':
-        train_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/train'
-        val_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/val'
-        test_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/test'
-    elif dataset_name == 'DS04':
-        train_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper_thresh04/final/train'
-        val_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper_thresh04/final/val'
-        test_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper_thresh04/final/test'
+    files_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/mimo_data/'
+
+    # pop elements from files_path if they are in genes_to_remov
 
     print("Starting")
 
+    conditions_list = []
+
     # train data
-    mypath = train_path
-    onlyfiles_full = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+    mypath = files_path
+    onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-    onlyfiles = []
-    for x in onlyfiles_full:
-        if x.split('_')[0] not in no_af2_transcripts:
-            onlyfiles.append(x)
+    # onlyfiles = [f for f in onlyfiles if f not in genes_to_remove]
 
-    train_files = [mypath + '/' + f for f in onlyfiles]
+    all_files = [mypath + '/' + f for f in onlyfiles]
+
+    # split into train, val, test
+    random.shuffle(all_files)
+
+    train_files = all_files[:int(0.8*len(all_files))]
+    val_files = all_files[int(0.8*len(all_files)):int(0.9*len(all_files))]
+    test_files = all_files[int(0.9*len(all_files)):]
 
     train_data = RBDataset_NoBS(train_files, dataset_name, feature_list)
     train_dataloader = DataLoader(train_data, batch_size=bs, shuffle=True) 
@@ -99,34 +143,14 @@ if __name__ == '__main__':
     print("Loaded Train")
 
     # val data
-    mypath = val_path
-    onlyfiles_full = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-
-    onlyfiles = []
-    for x in onlyfiles_full:
-        if x.split('_')[0] not in no_af2_transcripts:
-            onlyfiles.append(x)
-
-    val_files = [mypath + '/' + f for f in onlyfiles]
-
     val_data = RBDataset_NoBS(val_files, dataset_name, feature_list)
     val_dataloader = DataLoader(val_data, batch_size=bs, shuffle=True) 
 
     print("Loaded Val")
     
     # test data
-    mypath = test_path
-    onlyfiles_full = [f for f in listdir(mypath) if isfile(join(mypath, f))]
-
-    onlyfiles = []
-    for x in onlyfiles_full:
-        if x.split('_')[0] not in no_af2_transcripts:
-            onlyfiles.append(x)
-
-    test_files = [mypath + '/' + f for f in onlyfiles]
-
     test_data = RBDataset_NoBS(test_files, dataset_name, feature_list)
-    test_dataloader = DataLoader(test_data, bs, shuffle=True) 
+    test_dataloader = DataLoader(test_data, bs, shuffle=False) 
 
     print("Loaded Test")
 
@@ -137,30 +161,30 @@ if __name__ == '__main__':
     print("Device: ", device)
 
     input_dim = input_size
-    model_dims = 128
-    n_heads = 8
-    num_enc_layers = 1
-    num_dec_layers = 1
-    dim_ff = 128
+    hidden_dim = 256
+    output_dim = 1
+    n_layers = 4
+    bidirectional = True
     dropout = 0.1
-    model = TransformerModel(input_dim, model_dims, n_heads, num_enc_layers, num_dec_layers, dim_ff, dropout).to(device)
+    model = BiLSTMModel(input_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout, bs).to(device)
     model.apply(init_weights)
     model = model.to(torch.float)
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     logger.info(f'Model Params Total: {pytorch_total_params: 4d}')
 
-    criterion = PCCLoss()
-    criterion = criterion.to(device)
+    # loss function
+    criterion = PCCLoss().to(device)
 
-    lr = 1e-5
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 10, factor=0.1, verbose=True)
     early_stopping_patience = 20
     trigger_times = 0
 
     best_val_loss = float('inf')
-    epochs = 100
     best_model = None 
+
+    # # CL Experiment
+    # model.load_state_dict(torch.load('reg_models/CLExp2_P1-B-0-DS04_More06-NT_CBERT-BS1-PCCLoss.pt'))
 
     # Training Process
     for epoch in range(1, epochs + 1):
@@ -169,15 +193,21 @@ if __name__ == '__main__':
         logger.info(f'Training Epoch: {epoch:5d}')
         curr_lr = scheduler.optimizer.param_groups[0]['lr']
         logger.info(f'Learning Rate: {curr_lr: 2.10f}')
-        train_loss = train(model, train_dataloader, 1, device, criterion, mult_factor, loss_mult_factor, optimizer, logger)
+        wandb.log({"Learning Rate": curr_lr})
 
-        logger.info("------------- Val Set -------------")
-        val_loss = validation(model, val_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
+        train_loss, train_pr, train_sr =  train(model, train_dataloader, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger)
+
+        wandb.log({"Train Loss": train_loss, "Train Pearson": train_pr})
+
+        logger.info("------------- Validation -------------")
+        val_loss, val_pr = evaluate(model, val_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
         elapsed = time.time() - epoch_start_time
         logger.info('-' * 89)
         logger.info(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
           f'valid loss {val_loss:5.10f}')
         logger.info('-' * 89)
+
+        wandb.log({"Val Loss": val_loss, "Val Pearson": val_pr})
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
@@ -187,13 +217,17 @@ if __name__ == '__main__':
         
         logger.info(f'best val loss: {best_val_loss:5.10f}')
 
-        logger.info("------------- Test Set -------------")
-        test_loss = validation(model, test_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
+        wandb.log({"Best Val Loss": best_val_loss})
+
+        logger.info("------------- Testing -------------")
+        test_loss, test_pr = evaluate(model, test_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
         elapsed = time.time() - epoch_start_time
         logger.info('-' * 89)
         logger.info(f'| end of epoch {epoch:3d} | time: {elapsed:5.2f}s | '
           f'test loss {test_loss:5.10f}')
         logger.info('-' * 89)
+
+        wandb.log({"Test Loss": test_loss, "Test Pearson": test_pr})
 
         scheduler.step(val_loss)
 
@@ -212,14 +246,17 @@ if __name__ == '__main__':
     model.load_state_dict(torch.load(model_file_name))
     model.eval()
     with torch.no_grad():
-        print("------------- Val Set -------------")
-        val_loss = evaluate(model, val_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
+        print("------------- Validation -------------")
+        val_loss, val_pr = evaluate(model, val_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
         print('-' * 89)
         print(f'valid loss {val_loss:5.10f}')
         print('-' * 89)
 
-        print("------------- Test Set -------------")
-        test_loss = evaluate(model, test_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
+        print("------------- Testing -------------")
+        test_loss, test_pr = evaluate(model, test_dataloader, device, mult_factor, loss_mult_factor, criterion, logger, bs)
         print('-' * 89)
         print(f'test loss {test_loss:5.10f}')
         print('-' * 89)
+
+# wandb finish
+wandb.finish()
