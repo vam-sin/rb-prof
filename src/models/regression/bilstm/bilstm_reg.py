@@ -16,15 +16,15 @@ import wandb
 
 # hyperparameters
 lr = 1e-4
-architecture = 'BiLSTM'
+architecture = 'BiLSTM-0'
 dataset_name = 'DS06'
 feature_list = ['nt', 'cbert']
 feature_string = '_'.join(feature_list)
 loss_func_name = 'PCCLoss'
-supplement_liver_data = True
 epochs = 100
 bs = 1
-saved_files_name = 'B-0-DS06_Liver06-NT_CBERT-BS1-PCCLoss_OnlyCTRL'
+
+saved_files_name = architecture + '-' + dataset_name + '-' + feature_string + '-' + loss_func_name + '-BS' + str(bs) + '-LR_' + str(lr) + '-E_' + str(epochs)
 
 # start a new wandb run to track this script
 wandb.init(
@@ -40,7 +40,6 @@ wandb.init(
     "architecture": architecture,
     "features": feature_string,
     "dataset": dataset_name,
-    "supplement_liver_data": supplement_liver_data,
     "epochs": epochs,
     "batch_size": bs,
     "loss": loss_func_name
@@ -50,6 +49,7 @@ wandb.init(
 log_file_name = 'logs/' + saved_files_name + '.log'
 model_file_name = 'reg_models/' + saved_files_name + '.pt'
 
+# pearson correlation coefficient loss
 class PCCLoss(nn.Module):
     def __init__(self):
         super().__init__()
@@ -57,32 +57,6 @@ class PCCLoss(nn.Module):
         
     def forward(self, pred, actual):
         return -1 * self.pcc_l(pred, actual)
-
-# class PCCMAELoss(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-#         self.pcc_l = PCCLoss().to(torch.device('cuda'))
-#         self.mae_l = nn.L1Loss().to(torch.device('cuda'))
-#         self.training_total_steps = (3 * 5704)
-        
-#     def forward(self, pred, actual, step):
-#         ret = {
-#             "loss": 0.0,
-#             "pcc_l": 0.0,
-#             "mae_l": 0.0
-#         }
-        
-#         ret["pcc_l"] = self.pcc_l(pred, actual)
-#         ret["mae_l"] = self.mae_l(pred, actual)
-#         w = (step / self.training_total_steps)
-#         if w >= 1.0:
-#             ret["loss"] = ret["pcc_l"]
-#         else:
-#             w = (1.0 - w) ** 2
-#             ret["loss"] = ret["pcc_l"] + (ret["mae_l"] * w)
-#         # print(ret)
-
-#         return ret["loss"]
 
 # logging setup
 logger = logging.getLogger('')
@@ -152,6 +126,13 @@ if __name__ == '__main__':
         train_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/train'
         val_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/val'
         test_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/test'
+    elif dataset_name == 'DS06_Liver06':
+        liver_files_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/liver_06'
+        train_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/train'
+        val_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/val'
+        test_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/test'
+    elif dataset_name == 'Liver06':
+        liver_files_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/liver_06'
     elif dataset_name == 'DS04':
         train_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper_thresh04/final/train'
         val_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper_thresh04/final/val'
@@ -167,14 +148,13 @@ if __name__ == '__main__':
 
     onlyfiles = []
     for x in onlyfiles_full:
-        if x.split('_')[0] not in no_af2_transcripts and '_CTRL_' in x:
+        if x.split('_')[0] not in no_af2_transcripts:
             onlyfiles.append(x)
 
     train_files = [mypath + '/' + f for f in onlyfiles]
 
     # add liver data
-    if supplement_liver_data:
-        liver_files_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/liver_06'
+    if dataset_name == 'DS06_Liver06':
         onlyfiles_liver = [f for f in listdir(liver_files_path) if isfile(join(liver_files_path, f))]
         onlyfiles_full_liver = [liver_files_path + '/' + f for f in onlyfiles_liver]
 
@@ -202,7 +182,7 @@ if __name__ == '__main__':
 
     onlyfiles = []
     for x in onlyfiles_full:
-        if x.split('_')[0] not in no_af2_transcripts and '_CTRL_' in x:
+        if x.split('_')[0] not in no_af2_transcripts:
             onlyfiles.append(x)
 
     val_files = [mypath + '/' + f for f in onlyfiles]
@@ -218,7 +198,7 @@ if __name__ == '__main__':
 
     onlyfiles = []
     for x in onlyfiles_full:
-        if x.split('_')[0] not in no_af2_transcripts and '_CTRL_' in x:
+        if x.split('_')[0] not in no_af2_transcripts:
             onlyfiles.append(x)
 
     test_files = [mypath + '/' + f for f in onlyfiles]
@@ -234,6 +214,7 @@ if __name__ == '__main__':
     # device = torch.device('cpu')
     print("Device: ", device)
 
+    # bilstm model building
     input_dim = input_size
     hidden_dim = 256
     output_dim = 1
@@ -249,6 +230,7 @@ if __name__ == '__main__':
     # loss function
     criterion = PCCLoss().to(device)
 
+    # optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience = 10, factor=0.1, verbose=True)
     early_stopping_patience = 20
@@ -256,12 +238,6 @@ if __name__ == '__main__':
 
     best_val_loss = float('inf')
     best_model = None 
-
-    # # CL Experiment
-    # model.load_state_dict(torch.load('reg_models/CLExp2_P1-B-0-DS04_More06-NT_CBERT-BS1-PCCLoss.pt'))
-
-    # # pretrain model
-    # model.load_state_dict(torch.load('pretrain/reg_models/B-0-MIMOPretrain-NT_CBERT-BS1-PCCLoss.pt'))
 
     # Training Process
     for epoch in range(1, epochs + 1):

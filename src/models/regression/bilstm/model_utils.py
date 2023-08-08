@@ -27,46 +27,49 @@ class RBDataset_NoBS(Dataset):
         with open(self.list_of_file_paths[index], 'rb') as f:
             data_dict = pkl.load(f)
 
-        # # get data
-        # X_seq = np.asarray(data_dict['sequence'])
-
         # # features
         if self.dataset_name == 'DS06':
             nt = np.asarray(data_dict['nt'])
             cbert = np.asarray(data_dict['cbert'])
-            # t5 = np.asarray(data_dict['t5'])
-            # lem = np.asarray(data_dict['lem'])
-            # mlm_cdna_nt = np.asarray(data_dict['mlm_cdna_nt_pbert'])
-            # mlm_cdna_nt_idai = np.asarray(data_dict['mlm_cdna_nt_idai'])
-            # af2 = np.asarray(data_dict['AF2-SS'])
-            # conds = np.asarray(data_dict['conds'])
-            # depr_vec = np.asarray(data_dict['depr_vec'])
-            # geom = np.asarray(data_dict['geom'])
-            # codon_epa_encodings = np.asarray(data_dict['codon_epa_encodings'])
-            # svdimred = np.asarray(data_dict['svdimred'])
-            # print('svdimred.shape', svdimred.shape)
+            t5 = np.asarray(data_dict['t5'])
+            lem = np.asarray(data_dict['lem'])
+            mlm_cdna_nt = np.asarray(data_dict['mlm_cdna_nt_pbert'])
+            mlm_cdna_nt_idai = np.asarray(data_dict['mlm_cdna_nt_idai'])
+            af2 = np.asarray(data_dict['AF2-SS'])
+            conds = np.asarray(data_dict['conds'])
+            depr_vec = np.asarray(data_dict['depr_vec'])
+            geom = np.asarray(data_dict['geom'])
+            codon_epa_encodings = np.asarray(data_dict['codon_epa_encodings'])
+            svdimred = np.asarray(data_dict['svdimred'])
+            X_seq = np.asarray(data_dict['sequence'])
 
-            # if 'AF2-SS' in self.feature_list or 't5' in self.feature_list or 'geom' in self.feature_list or 'svdimred' in self.feature_list:
-            #     len_ = geom.shape[0]
-            #     nt = nt[:len_, :]
-            #     cbert = cbert[:len_, :]
-            #     lem = lem[:len_, :]
-            #     mlm_cdna_nt = mlm_cdna_nt[:len_, :]
-            #     mlm_cdna_nt_idai = mlm_cdna_nt_idai[:len_, :]
-            #     conds = np.asarray(data_dict['conds'])[:len_, :]
-            #     depr_vec = np.asarray(data_dict['depr_vec'])[:len_, :]
+            if 'AF2-SS' in self.feature_list or 't5' in self.feature_list or 'geom' in self.feature_list or 'svdimred' in self.feature_list:
+                len_ = geom.shape[0]
+                nt = nt[:len_, :]
+                cbert = cbert[:len_, :]
+                lem = lem[:len_, :]
+                mlm_cdna_nt = mlm_cdna_nt[:len_, :]
+                mlm_cdna_nt_idai = mlm_cdna_nt_idai[:len_, :]
+                conds = np.asarray(data_dict['conds'])[:len_, :]
+                depr_vec = np.asarray(data_dict['depr_vec'])[:len_, :]
 
-            # if 'codon_epa_encodings' in self.feature_list:
-            #     nt = nt[2:, :]
-            #     conds = np.asarray(data_dict['conds'])[2:, :]
-            #     depr_vec = np.asarray(data_dict['depr_vec'])[2:, :]
+            if 'codon_epa_encodings' in self.feature_list:
+                nt = nt[2:, :]
+                conds = np.asarray(data_dict['conds'])[2:, :]
+                depr_vec = np.asarray(data_dict['depr_vec'])[2:, :]
 
-        # elif self.dataset_name == 'DS04':
-        #     X = np.asarray(data_dict['X'])
-        #     nt = X[:,0:15]
-        #     cbert = X[:,15:15+768]
-        #     conds = X[:,15+768:15+768+20]
-        #     depr_vec = X[:,15+768+20:15+768+20+1]
+        elif self.dataset_name == 'DS06_Liver06':
+            nt = np.asarray(data_dict['nt'])
+            cbert = np.asarray(data_dict['cbert'])
+            conds = np.asarray(data_dict['conds'])
+            depr_vec = np.asarray(data_dict['depr_vec'])
+
+        elif self.dataset_name == 'DS04':
+            X = np.asarray(data_dict['X'])
+            nt = X[:,0:15]
+            cbert = X[:,15:15+768]
+            conds = X[:,15+768:15+768+20]
+            depr_vec = X[:,15+768+20:15+768+20+1]
 
         conds_new = np.zeros((nt.shape[0], 21)) # additional to make it 21
         # put first 20 as prev conds
@@ -81,48 +84,48 @@ class RBDataset_NoBS(Dataset):
 
         # combine features
         X_ft = conds_fin
-        # if 'AF2-SS' in self.feature_list:
-        #     X_ft = np.concatenate((af2, X_ft), axis=1)
-        # if 'mlm_cdna_nt_idai' in self.feature_list:
-        #     X_ft = np.concatenate((mlm_cdna_nt_idai, X_ft), axis=1)
-        # if 'mlm_cdna_nt_pbert' in self.feature_list:
-        #     X_ft = np.concatenate((mlm_cdna_nt, X_ft), axis=1)
-        # if 'lem' in self.feature_list:
-        #     X_ft = np.concatenate((lem, X_ft), axis=1)
-        # if 't5' in self.feature_list:
-        #     X_ft = np.concatenate((t5, X_ft), axis=1)
+        if 'AF2-SS' in self.feature_list:
+            X_ft = np.concatenate((af2, X_ft), axis=1)
+        if 'mlm_cdna_nt_idai' in self.feature_list:
+            X_ft = np.concatenate((mlm_cdna_nt_idai, X_ft), axis=1)
+        if 'mlm_cdna_nt_pbert' in self.feature_list:
+            X_ft = np.concatenate((mlm_cdna_nt, X_ft), axis=1)
+        if 'lem' in self.feature_list:
+            X_ft = np.concatenate((lem, X_ft), axis=1)
+        if 't5' in self.feature_list:
+            X_ft = np.concatenate((t5, X_ft), axis=1)
         if 'cbert' in self.feature_list:
             X_ft = np.concatenate((cbert, X_ft), axis=1)
         if 'nt' in self.feature_list:
             X_ft = np.concatenate((nt, X_ft), axis=1)
-        # if 'geom' in self.feature_list:
-        #     X_ft = np.concatenate((geom, X_ft), axis=1)
-        # if 'codon_epa_encodings' in self.feature_list:
-        #     X_ft = np.concatenate((codon_epa_encodings, X_ft), axis=1)
-        # if 'svdimred' in self.feature_list:
-        #     X_ft = np.concatenate((svdimred, X_ft), axis=1)
+        if 'geom' in self.feature_list:
+            X_ft = np.concatenate((geom, X_ft), axis=1)
+        if 'codon_epa_encodings' in self.feature_list:
+            X_ft = np.concatenate((codon_epa_encodings, X_ft), axis=1)
+        if 'svdimred' in self.feature_list:
+            X_ft = np.concatenate((svdimred, X_ft), axis=1)
 
         # y
         y = [float(val) for val in data_dict['y']]
         y = np.asarray(y)
         y = np.absolute(y)
 
-        # if 'codon_epa_encodings' in self.feature_list:
-        #     y = y[2:]
+        if 'codon_epa_encodings' in self.feature_list:
+            y = y[2:]
 
-        # if 'AF2-SS' in self.feature_list or 't5' in self.feature_list or 'geom' in self.feature_list or 'svdimred' in self.feature_list:
-        #     y = y[:len_]
+        if 'AF2-SS' in self.feature_list or 't5' in self.feature_list or 'geom' in self.feature_list or 'svdimred' in self.feature_list:
+            y = y[:len_]
 
         condition = self.list_of_file_paths[index].split('/')[-1].split('_')[1]
 
-        # if 'cembeds' in self.feature_list:
-        #     return X_seq, conds_fin, y, condition
+        if 'cembeds' in self.feature_list:
+            return X_seq, conds_fin, y, condition
 
         X_ft = torch.tensor(X_ft, dtype=torch.float32)
         y = torch.tensor(y, dtype=torch.float32)
 
-        # remove last 22 conds fin values because we don't need them as we are doing only CTRL 
-        X_ft = X_ft[:, :-22]
+        # # remove last 22 conds fin values because we don't need them as we are doing only CTRL 
+        # X_ft = X_ft[:, :-22]
         
         return X_ft, conds_fin, y, condition
 
