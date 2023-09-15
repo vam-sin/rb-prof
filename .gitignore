@@ -64,6 +64,7 @@
 /src/models/regression/xlnet/run_xlnet_pretrain_idai.sh
 /src/models/regression/xlnet/run_xlnet.sh 
 /src/models/regression/xlnet/xlnet_ds06.py 
+/src/models/regression/xlnet/xlnet_depr_pel.py
 /src/models/regression/xlnet/xlnet_model_pretrain_idai.py 
 /src/models/regression/nt.ipynb 
 /src/models/regression/split_ds.py
