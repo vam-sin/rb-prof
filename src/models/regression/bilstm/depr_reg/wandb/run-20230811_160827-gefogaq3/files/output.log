@@ -1,0 +1,28 @@
+Starting
+Loaded Train
+Loaded Val
+Loaded Test
+[Fri, 11 Aug 2023 16:08:28] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+Device:  cuda
+[Fri, 11 Aug 2023 16:08:31] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:08:31] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:08:31] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+Training
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:76: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:78: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight_ih_l0)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:79: UserWarning: nn.init.orthogonal is now deprecated in favor of nn.init.orthogonal_.
+  torch.nn.init.orthogonal(m.weight_hh_l0)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:80: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight_ih_l0_reverse)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:81: UserWarning: nn.init.orthogonal is now deprecated in favor of nn.init.orthogonal_.
+  torch.nn.init.orthogonal(m.weight_hh_l0_reverse)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:83: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+Traceback (most recent call last):
+  File "/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py", line 247, in <module>
+    train_loss, train_pr, train_sr =  train(model, train_dataloader, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger, epoch, epochs)
+  File "/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/model_utils.py", line 249, in train
+    condition_value = condition_value.long().to(device)
+AttributeError: 'list' object has no attribute 'long'

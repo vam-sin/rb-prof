@@ -1,0 +1,54 @@
+[Fri, 11 Aug 2023 16:07:15] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:07:18] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:07:18] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:07:18] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:07:25] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:07:25] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2
+[Fri, 11 Aug 2023 16:08:28] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:08:31] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:08:31] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:08:31] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:08:37] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:08:37] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2
+[Fri, 11 Aug 2023 16:09:29] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:09:32] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:09:32] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:09:32] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:09:38] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:09:38] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2
+[Fri, 11 Aug 2023 16:11:06] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:11:10] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:11:10] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:11:10] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:11:17] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:11:17] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2
+[Fri, 11 Aug 2023 16:12:26] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:12:30] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:12:30] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:12:30] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:12:38] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:12:38] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2
+[Fri, 11 Aug 2023 16:14:30] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:14:35] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:14:35] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:14:35] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:14:35] INFO [model_utils.py.train:289] | samples trained:     1 | train (intermediate) loss: 0.0327570960 | train (intermediate) pr: -0.0327571296 | train (intermediate) sr: 0.1198779489 |
+[Fri, 11 Aug 2023 16:14:49] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:14:49] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2
+[Fri, 11 Aug 2023 16:16:24] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+[Fri, 11 Aug 2023 16:16:28] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:16:28] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:16:28] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+[Fri, 11 Aug 2023 16:16:28] INFO [model_utils.py.train:289] | samples trained:     1 | train (intermediate) loss: 0.0327570960 | train (intermediate) pr: -0.0327571296 | train (intermediate) sr: 0.1198779489 |
+[Fri, 11 Aug 2023 16:17:03] INFO [model_utils.py.train:289] | samples trained:   101 | train (intermediate) loss: -0.2205781722 | train (intermediate) pr: 0.2205781153 | train (intermediate) sr: 0.2086583971 |
+[Fri, 11 Aug 2023 16:17:33] INFO [model_utils.py.train:289] | samples trained:   201 | train (intermediate) loss: -0.2560775211 | train (intermediate) pr: 0.2560774981 | train (intermediate) sr: 0.2300586443 |
+[Fri, 11 Aug 2023 16:18:03] INFO [model_utils.py.train:289] | samples trained:   301 | train (intermediate) loss: -0.2714850955 | train (intermediate) pr: 0.2714850659 | train (intermediate) sr: 0.2418424024 |
+[Fri, 11 Aug 2023 16:18:33] INFO [model_utils.py.train:289] | samples trained:   401 | train (intermediate) loss: -0.2859559185 | train (intermediate) pr: 0.2866707904 | train (intermediate) sr: 0.2561144631 |
+[Fri, 11 Aug 2023 16:18:59] INFO [model_utils.py.train:289] | samples trained:   501 | train (intermediate) loss: -0.2897459328 | train (intermediate) pr: 0.2903253969 | train (intermediate) sr: 0.2579863252 |
+[Fri, 11 Aug 2023 16:19:31] INFO [model_utils.py.train:289] | samples trained:   601 | train (intermediate) loss: -0.2966029719 | train (intermediate) pr: 0.2970972823 | train (intermediate) sr: 0.2668377715 |
+[Fri, 11 Aug 2023 16:20:05] INFO [model_utils.py.train:289] | samples trained:   701 | train (intermediate) loss: -0.3048049379 | train (intermediate) pr: 0.3052403605 | train (intermediate) sr: 0.2727977699 |
+[Fri, 11 Aug 2023 16:20:36] INFO [model_utils.py.train:289] | samples trained:   801 | train (intermediate) loss: -0.3106384340 | train (intermediate) pr: 0.3110267195 | train (intermediate) sr: 0.2784869164 |
+[Fri, 11 Aug 2023 16:21:11] INFO [model_utils.py.train:289] | samples trained:   901 | train (intermediate) loss: -0.3150004954 | train (intermediate) pr: 0.3153504882 | train (intermediate) sr: 0.2822459544 |
+[Fri, 11 Aug 2023 16:21:49] INFO [model_utils.py.train:289] | samples trained:  1001 | train (intermediate) loss: -0.3198696553 | train (intermediate) pr: 0.3201895106 | train (intermediate) sr: 0.2887125259 |
+[Fri, 11 Aug 2023 16:22:22] DEBUG [connectionpool.py._new_conn:1003] Starting new HTTPS connection (1): o151352.ingest.sentry.io:443
+[Fri, 11 Aug 2023 16:22:22] DEBUG [connectionpool.py._make_request:456] https://o151352.ingest.sentry.io:443 "POST /api/4504800232407040/envelope/ HTTP/1.1" 200 2

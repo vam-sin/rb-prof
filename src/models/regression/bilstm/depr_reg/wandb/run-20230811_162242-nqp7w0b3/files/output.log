@@ -1,0 +1,36 @@
+Starting
+Loaded Train
+Loaded Val
+Loaded Test
+[Fri, 11 Aug 2023 16:22:43] INFO [bilstm_reg.py.<module>:206] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+Device:  cuda
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:78: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:80: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight_ih_l0)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:81: UserWarning: nn.init.orthogonal is now deprecated in favor of nn.init.orthogonal_.
+  torch.nn.init.orthogonal(m.weight_hh_l0)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:82: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight_ih_l0_reverse)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:83: UserWarning: nn.init.orthogonal is now deprecated in favor of nn.init.orthogonal_.
+  torch.nn.init.orthogonal(m.weight_hh_l0_reverse)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:85: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+[Fri, 11 Aug 2023 16:22:46] INFO [bilstm_reg.py.<module>:223] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:22:46] INFO [bilstm_reg.py.<module>:244] Training Epoch:     1
+[Fri, 11 Aug 2023 16:22:46] INFO [bilstm_reg.py.<module>:246] Learning Rate:  0.0000200000
+Training
+[Fri, 11 Aug 2023 16:22:46] INFO [model_utils.py.train:289] | samples trained:     1 | train (intermediate) loss: 0.0327570960 | train (intermediate) pr: -0.0327571296 | train (intermediate) sr: 0.1198779489 |
+[Fri, 11 Aug 2023 16:23:28] INFO [model_utils.py.train:289] | samples trained:   101 | train (intermediate) loss: -0.1099773761 | train (intermediate) pr: 0.1099773623 | train (intermediate) sr: 0.1129239806 |
+[Fri, 11 Aug 2023 16:24:07] INFO [model_utils.py.train:289] | samples trained:   201 | train (intermediate) loss: -0.1659499056 | train (intermediate) pr: 0.1659499044 | train (intermediate) sr: 0.1604498444 |
+[Fri, 11 Aug 2023 16:24:47] INFO [model_utils.py.train:289] | samples trained:   301 | train (intermediate) loss: -0.1931775818 | train (intermediate) pr: 0.1931775789 | train (intermediate) sr: 0.1788553907 |
+[Fri, 11 Aug 2023 16:25:25] INFO [model_utils.py.train:289] | samples trained:   401 | train (intermediate) loss: -0.2159199233 | train (intermediate) pr: 0.2164597395 | train (intermediate) sr: 0.1955360162 |
+[Fri, 11 Aug 2023 16:26:00] INFO [model_utils.py.train:289] | samples trained:   501 | train (intermediate) loss: -0.2290444263 | train (intermediate) pr: 0.2295025144 | train (intermediate) sr: 0.2031099282 |
+[Fri, 11 Aug 2023 16:26:42] INFO [model_utils.py.train:289] | samples trained:   601 | train (intermediate) loss: -0.2408917290 | train (intermediate) pr: 0.2412932138 | train (intermediate) sr: 0.2137356128 |
+[Fri, 11 Aug 2023 16:27:23] INFO [model_utils.py.train:289] | samples trained:   701 | train (intermediate) loss: -0.2520993312 | train (intermediate) pr: 0.2524594835 | train (intermediate) sr: 0.2200608430 |
+[Fri, 11 Aug 2023 16:28:01] INFO [model_utils.py.train:289] | samples trained:   801 | train (intermediate) loss: -0.2609498071 | train (intermediate) pr: 0.2612759947 | train (intermediate) sr: 0.2268613181 |
+[Fri, 11 Aug 2023 16:28:38] INFO [model_utils.py.train:289] | samples trained:   901 | train (intermediate) loss: -0.2670169540 | train (intermediate) pr: 0.2673136292 | train (intermediate) sr: 0.2301706595 |
+[Fri, 11 Aug 2023 16:29:15] INFO [model_utils.py.train:289] | samples trained:  1001 | train (intermediate) loss: -0.2731321249 | train (intermediate) pr: 0.2734052413 | train (intermediate) sr: 0.2360633842 |
+[Fri, 11 Aug 2023 16:30:04] INFO [model_utils.py.train:289] | samples trained:  1101 | train (intermediate) loss: -0.2778370623 | train (intermediate) pr: 0.2780896348 | train (intermediate) sr: 0.2390074835 |
+[Fri, 11 Aug 2023 16:30:43] INFO [model_utils.py.train:289] | samples trained:  1201 | train (intermediate) loss: -0.2830789805 | train (intermediate) pr: 0.2833148790 | train (intermediate) sr: 0.2436669646 |
+[Fri, 11 Aug 2023 16:31:24] INFO [model_utils.py.train:289] | samples trained:  1301 | train (intermediate) loss: -0.2866157916 | train (intermediate) pr: 0.2868362576 | train (intermediate) sr: 0.2462016018 |

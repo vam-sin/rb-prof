@@ -202,56 +202,56 @@ def evaluate(model: nn.Module, val_dataloader, device, mult_factor, loss_mult_fa
     # histogram of the corr_lis 
     plt.hist(corr_lis, bins=100, color='#2ecc71')
     plt.title(f'[All Conditions] Av PR: {np.mean(corr_lis):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist.png")
     plt.clf()
 
     # histogram of the corr_lis ctrl
     plt.hist(corr_ctrl, bins=100, color='#f1c40f')
     plt.title(f'[CTRL] Av PR: {np.mean(corr_ctrl):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist_ctrl.png")
     plt.clf()
 
     # histogram of the corr_lis ile
     plt.hist(corr_ile, bins=100, color='#e67e22')
     plt.title(f'[ILE] Av PR: {np.mean(corr_ile):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist_ile.png")
     plt.clf()
 
     # histogram of the corr_lis leu-ile
     plt.hist(corr_leu_ile, bins=100, color='#3498db')
     plt.title(f'[LEU-ILE] Av PR: {np.mean(corr_leu_ile):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist_leu_ile.png")
     plt.clf()
 
     # histogram of the corr_lis leu 
     plt.hist(corr_leu, bins=100, color='#2ecc71')
     plt.title(f'[LEU] Av PR: {np.mean(corr_leu):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist_leu.png")
     plt.clf()
 
     # histogram of the corr_lis val
     plt.hist(corr_val, bins=100, color='#9b59b6')
     plt.title(f'[VAL] Av PR: {np.mean(corr_val):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist_val.png")
     plt.clf()
 
     # histogram of the corr_lis leu-ile-val
     plt.hist(corr_leu_ile_val, bins=100, color='#e74c3c')
     plt.title(f'[LEU-ILE-VAL] Av PR: {np.mean(corr_leu_ile_val):1.2f}', fontsize=20)
-    plt.xlabel("Pearson Correlation Coefficient")
-    plt.ylabel("Frequency")
+    plt.xlabel("Pearson Correlation Coefficient", fontsize=10)
+    plt.ylabel("Frequency", fontsize=10)
     plt.savefig("plots/pearson_corr_hist_leu-ile-val.png")
     plt.clf()
 
@@ -376,5 +376,14 @@ if __name__ == '__main__':
 
 
 '''BiLSTM:
-
+CTRL:  402 0.47280696905413766
+ILE:  245 0.5190610245553468
+LEU-ILE:  146 0.4468298206548672
+LEU:  232 0.4817325897046564
+LEU-ILE-VAL:  10 0.5313332937712453
+VAL:  8 0.4967031421233196
+Corr Perc Window 0.6 to 0.8:  0.4691532967579137 694
+Corr Perc Window 0.8+:  0.5098339178441865 349
+Best File:  ENSMUST00000020118.4_CTRL_.pkl 0.8851913939504836
+Worst File:  ENSMUST00000084125.9_ILE_.pkl 0.09042225656963047
 '''

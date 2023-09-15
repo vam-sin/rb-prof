@@ -1,0 +1,192 @@
+2023-08-11 16:08:27,222 INFO    StreamThr :1058809 [internal.py:wandb_internal():86] W&B internal server running at pid: 1058809, started at: 2023-08-11 16:08:27.220549
+2023-08-11 16:08:27,233 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: status
+2023-08-11 16:08:27,235 INFO    WriterThread:1058809 [datastore.py:open_for_write():85] open: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/run-gefogaq3.wandb
+2023-08-11 16:08:27,237 DEBUG   SenderThread:1058809 [sender.py:send():379] send: header
+2023-08-11 16:08:27,273 DEBUG   SenderThread:1058809 [sender.py:send():379] send: run
+2023-08-11 16:08:27,713 INFO    SenderThread:1058809 [dir_watcher.py:__init__():211] watching files in: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files
+2023-08-11 16:08:27,714 INFO    SenderThread:1058809 [sender.py:_start_run_threads():1121] run started: gefogaq3 with start time 1691762907.223777
+2023-08-11 16:08:27,714 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: summary_record
+2023-08-11 16:08:27,716 INFO    SenderThread:1058809 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-11 16:08:27,723 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: check_version
+2023-08-11 16:08:27,724 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: check_version
+2023-08-11 16:08:27,809 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: run_start
+2023-08-11 16:08:27,827 DEBUG   HandlerThread:1058809 [system_info.py:__init__():31] System info init
+2023-08-11 16:08:27,827 DEBUG   HandlerThread:1058809 [system_info.py:__init__():46] System info init done
+2023-08-11 16:08:27,827 INFO    HandlerThread:1058809 [system_monitor.py:start():181] Starting system monitor
+2023-08-11 16:08:27,827 INFO    SystemMonitor:1058809 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2023-08-11 16:08:27,827 INFO    HandlerThread:1058809 [system_monitor.py:probe():201] Collecting system info
+2023-08-11 16:08:27,828 INFO    SystemMonitor:1058809 [interfaces.py:start():190] Started cpu monitoring
+2023-08-11 16:08:27,830 INFO    SystemMonitor:1058809 [interfaces.py:start():190] Started disk monitoring
+2023-08-11 16:08:27,832 INFO    SystemMonitor:1058809 [interfaces.py:start():190] Started gpu monitoring
+2023-08-11 16:08:27,835 INFO    SystemMonitor:1058809 [interfaces.py:start():190] Started memory monitoring
+2023-08-11 16:08:27,836 INFO    SystemMonitor:1058809 [interfaces.py:start():190] Started network monitoring
+2023-08-11 16:08:27,870 DEBUG   HandlerThread:1058809 [system_info.py:probe():195] Probing system
+2023-08-11 16:08:27,878 DEBUG   HandlerThread:1058809 [system_info.py:_probe_git():180] Probing git
+2023-08-11 16:08:27,909 DEBUG   HandlerThread:1058809 [system_info.py:_probe_git():188] Probing git done
+2023-08-11 16:08:27,909 DEBUG   HandlerThread:1058809 [system_info.py:probe():240] Probing system done
+2023-08-11 16:08:27,909 DEBUG   HandlerThread:1058809 [system_monitor.py:probe():210] {'os': 'Linux-5.4.0-153-generic-x86_64-with-glibc2.31', 'python': '3.9.12', 'heartbeatAt': '2023-08-11T14:08:27.870958', 'startedAt': '2023-08-11T14:08:27.192879', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': '/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py', 'codePath': 'src/models/regression/bilstm/depr_reg/bilstm_reg.py', 'git': {'remote': 'https://github.com/vam-sin/rb-prof.git', 'commit': '186742dc82d30a10c72ee7125ef8b64b05913659'}, 'email': 'vamsinallapareddy@gmail.com', 'root': '/nfs_home/nallapar/rb-prof', 'host': 'lts2gdk0', 'username': 'nallapar', 'executable': '/nfs_home/nallapar/rb-prof/bio_embeds/bin/python', 'cpu_count': 24, 'cpu_count_logical': 48, 'cpu_freq': {'current': 1301.5735624999998, 'min': 1200.0, 'max': 2900.0}, 'cpu_freq_per_core': [{'current': 2185.455, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.521, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.629, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.685, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.903, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.246, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.461, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.073, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.122, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.622, 'min': 1200.0, 'max': 2900.0}, {'current': 1503.489, 'min': 1200.0, 'max': 2900.0}, {'current': 1292.628, 'min': 1200.0, 'max': 2900.0}, {'current': 2197.43, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.61, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.001, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.761, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.922, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.179, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.068, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.774, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.394, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.957, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.006, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.933, 'min': 1200.0, 'max': 2900.0}, {'current': 2200.561, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.409, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.948, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.027, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.225, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.224, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.235, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.563, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.605, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.957, 'min': 1200.0, 'max': 2900.0}, {'current': 1425.634, 'min': 1200.0, 'max': 2900.0}, {'current': 1286.374, 'min': 1200.0, 'max': 2900.0}, {'current': 2200.077, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.792, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.92, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.968, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.284, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.091, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.716, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.928, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.604, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.33, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.546, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.217, 'min': 1200.0, 'max': 2900.0}], 'disk': {'total': 36.4654541015625, 'used': 27.638587951660156}, 'gpu': 'NVIDIA GeForce GTX 1080 Ti', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce GTX 1080 Ti', 'memory_total': 11721506816}], 'memory': {'total': 220.27867126464844}}
+2023-08-11 16:08:27,910 INFO    HandlerThread:1058809 [system_monitor.py:probe():211] Finished collecting system info
+2023-08-11 16:08:27,910 INFO    HandlerThread:1058809 [system_monitor.py:probe():214] Publishing system info
+2023-08-11 16:08:27,910 DEBUG   HandlerThread:1058809 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-08-11 16:08:27,912 DEBUG   HandlerThread:1058809 [system_info.py:_save_pip():67] Saving pip packages done
+2023-08-11 16:08:27,916 INFO    HandlerThread:1058809 [system_monitor.py:probe():216] Finished publishing system info
+2023-08-11 16:08:27,944 DEBUG   SenderThread:1058809 [sender.py:send():379] send: files
+2023-08-11 16:08:27,944 INFO    SenderThread:1058809 [sender.py:_save_file():1375] saving file wandb-metadata.json with policy now
+2023-08-11 16:08:27,968 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:08:27,968 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:08:28,251 DEBUG   SenderThread:1058809 [sender.py:send():379] send: telemetry
+2023-08-11 16:08:28,548 INFO    wandb-upload_0:1058809 [upload_job.py:push():131] Uploaded file /tmp/tmpbj0xw2_rwandb/w5lqgqww-wandb-metadata.json
+2023-08-11 16:08:28,718 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/wandb-summary.json
+2023-08-11 16:08:28,719 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/output.log
+2023-08-11 16:08:28,719 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/requirements.txt
+2023-08-11 16:08:28,719 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/wandb-metadata.json
+2023-08-11 16:08:30,718 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/output.log
+2023-08-11 16:08:31,327 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: partial_history
+2023-08-11 16:08:31,330 DEBUG   SenderThread:1058809 [sender.py:send():379] send: history
+2023-08-11 16:08:31,330 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: summary_record
+2023-08-11 16:08:31,333 INFO    SenderThread:1058809 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-11 16:08:31,339 DEBUG   SenderThread:1058809 [sender.py:send():379] send: exit
+2023-08-11 16:08:31,339 INFO    SenderThread:1058809 [sender.py:send_exit():584] handling exit code: 1
+2023-08-11 16:08:31,340 INFO    SenderThread:1058809 [sender.py:send_exit():586] handling runtime: 3
+2023-08-11 16:08:31,343 INFO    SenderThread:1058809 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-11 16:08:31,343 INFO    SenderThread:1058809 [sender.py:send_exit():592] send defer
+2023-08-11 16:08:31,344 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,344 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 0
+2023-08-11 16:08:31,344 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,344 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 0
+2023-08-11 16:08:31,344 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 1
+2023-08-11 16:08:31,344 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,344 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 1
+2023-08-11 16:08:31,344 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,344 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 1
+2023-08-11 16:08:31,344 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 2
+2023-08-11 16:08:31,345 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,345 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 2
+2023-08-11 16:08:31,345 INFO    HandlerThread:1058809 [system_monitor.py:finish():190] Stopping system monitor
+2023-08-11 16:08:31,345 DEBUG   SystemMonitor:1058809 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2023-08-11 16:08:31,345 DEBUG   SystemMonitor:1058809 [system_monitor.py:_start():166] Finished system metrics aggregation loop
+2023-08-11 16:08:31,346 DEBUG   SystemMonitor:1058809 [system_monitor.py:_start():170] Publishing last batch of metrics
+2023-08-11 16:08:31,345 INFO    HandlerThread:1058809 [interfaces.py:finish():202] Joined cpu monitor
+2023-08-11 16:08:31,361 INFO    HandlerThread:1058809 [interfaces.py:finish():202] Joined disk monitor
+2023-08-11 16:08:31,430 INFO    HandlerThread:1058809 [interfaces.py:finish():202] Joined gpu monitor
+2023-08-11 16:08:31,430 INFO    HandlerThread:1058809 [interfaces.py:finish():202] Joined memory monitor
+2023-08-11 16:08:31,431 INFO    HandlerThread:1058809 [interfaces.py:finish():202] Joined network monitor
+2023-08-11 16:08:31,431 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,431 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 2
+2023-08-11 16:08:31,431 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 3
+2023-08-11 16:08:31,431 DEBUG   SenderThread:1058809 [sender.py:send():379] send: stats
+2023-08-11 16:08:31,431 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,432 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 3
+2023-08-11 16:08:31,432 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,432 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 3
+2023-08-11 16:08:31,432 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 4
+2023-08-11 16:08:31,432 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,432 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 4
+2023-08-11 16:08:31,432 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,433 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 4
+2023-08-11 16:08:31,433 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 5
+2023-08-11 16:08:31,433 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,433 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 5
+2023-08-11 16:08:31,433 DEBUG   SenderThread:1058809 [sender.py:send():379] send: summary
+2023-08-11 16:08:31,435 INFO    SenderThread:1058809 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-11 16:08:31,435 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,435 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 5
+2023-08-11 16:08:31,435 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 6
+2023-08-11 16:08:31,435 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,435 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 6
+2023-08-11 16:08:31,436 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,436 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 6
+2023-08-11 16:08:31,440 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:08:31,648 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 7
+2023-08-11 16:08:31,648 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:31,648 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 7
+2023-08-11 16:08:31,648 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:31,648 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 7
+2023-08-11 16:08:31,720 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/wandb-summary.json
+2023-08-11 16:08:31,720 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/config.yaml
+2023-08-11 16:08:32,340 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-11 16:08:32,722 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/output.log
+2023-08-11 16:08:33,325 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 8
+2023-08-11 16:08:33,325 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: poll_exit
+2023-08-11 16:08:33,325 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:33,326 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 8
+2023-08-11 16:08:33,326 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:33,326 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 8
+2023-08-11 16:08:33,326 INFO    SenderThread:1058809 [job_builder.py:build():281] Attempting to build job artifact
+2023-08-11 16:08:33,330 INFO    SenderThread:1058809 [job_builder.py:_get_source_type():400] is repo sourced job
+2023-08-11 16:08:33,333 INFO    SenderThread:1058809 [job_builder.py:build():374] adding wandb-job metadata file
+2023-08-11 16:08:33,340 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-11 16:08:33,377 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 9
+2023-08-11 16:08:33,378 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: poll_exit
+2023-08-11 16:08:33,378 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:33,378 DEBUG   SenderThread:1058809 [sender.py:send():379] send: artifact
+2023-08-11 16:08:33,379 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 9
+2023-08-11 16:08:33,723 INFO    Thread-12 :1058809 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/output.log
+2023-08-11 16:08:34,069 INFO    SenderThread:1058809 [sender.py:send_artifact():1475] sent artifact job-https___github.com_vam-sin_rb-prof.git_src_models_regression_bilstm_depr_reg_bilstm_reg.py - {'id': 'QXJ0aWZhY3Q6NTM5NDU2Nzk2', 'digest': '1493979716df3c218e155cf0e34b0d42', 'state': 'COMMITTED', 'aliases': [{'artifactCollectionName': 'job-https___github.com_vam-sin_rb-prof.git_src_models_regression_bilstm_depr_reg_bilstm_reg.py', 'alias': 'latest'}, {'artifactCollectionName': 'job-https___github.com_vam-sin_rb-prof.git_src_models_regression_bilstm_depr_reg_bilstm_reg.py', 'alias': 'v0'}], 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjg5Nzg3NDE5', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6NTM5NDU2Nzk2', 'versionIndex': 0}}, 'version': 'v0'}
+2023-08-11 16:08:34,070 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:34,070 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 9
+2023-08-11 16:08:34,070 INFO    SenderThread:1058809 [dir_watcher.py:finish():358] shutting down directory watcher
+2023-08-11 16:08:34,341 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-11 16:08:34,726 INFO    SenderThread:1058809 [dir_watcher.py:finish():388] scan: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files
+2023-08-11 16:08:34,727 INFO    SenderThread:1058809 [dir_watcher.py:finish():402] scan save: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/config.yaml config.yaml
+2023-08-11 16:08:34,727 INFO    SenderThread:1058809 [dir_watcher.py:finish():402] scan save: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/wandb-summary.json wandb-summary.json
+2023-08-11 16:08:34,731 INFO    SenderThread:1058809 [dir_watcher.py:finish():402] scan save: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/requirements.txt requirements.txt
+2023-08-11 16:08:34,733 INFO    SenderThread:1058809 [dir_watcher.py:finish():402] scan save: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/wandb-metadata.json wandb-metadata.json
+2023-08-11 16:08:34,733 INFO    SenderThread:1058809 [dir_watcher.py:finish():402] scan save: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/output.log output.log
+2023-08-11 16:08:34,735 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 10
+2023-08-11 16:08:34,736 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: poll_exit
+2023-08-11 16:08:34,739 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:34,739 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 10
+2023-08-11 16:08:34,742 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:34,742 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 10
+2023-08-11 16:08:34,743 INFO    SenderThread:1058809 [file_pusher.py:finish():159] shutting down file pusher
+2023-08-11 16:08:35,109 INFO    wandb-upload_0:1058809 [upload_job.py:push():131] Uploaded file /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/config.yaml
+2023-08-11 16:08:35,148 INFO    wandb-upload_1:1058809 [upload_job.py:push():131] Uploaded file /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/wandb-summary.json
+2023-08-11 16:08:35,177 INFO    wandb-upload_3:1058809 [upload_job.py:push():131] Uploaded file /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/output.log
+2023-08-11 16:08:35,209 INFO    wandb-upload_2:1058809 [upload_job.py:push():131] Uploaded file /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/files/requirements.txt
+2023-08-11 16:08:35,342 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-11 16:08:35,343 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: poll_exit
+2023-08-11 16:08:35,410 INFO    Thread-11 :1058809 [sender.py:transition_state():612] send defer: 11
+2023-08-11 16:08:35,410 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:35,410 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 11
+2023-08-11 16:08:35,411 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:35,411 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 11
+2023-08-11 16:08:35,411 INFO    SenderThread:1058809 [file_pusher.py:join():164] waiting for file pusher
+2023-08-11 16:08:35,411 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 12
+2023-08-11 16:08:35,411 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:35,412 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 12
+2023-08-11 16:08:35,412 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:35,412 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 12
+2023-08-11 16:08:35,412 INFO    SenderThread:1058809 [file_stream.py:finish():593] file stream finish called
+2023-08-11 16:08:35,600 INFO    SenderThread:1058809 [file_stream.py:finish():597] file stream finish is done
+2023-08-11 16:08:35,600 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 13
+2023-08-11 16:08:35,600 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:35,600 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 13
+2023-08-11 16:08:35,601 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:35,601 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 13
+2023-08-11 16:08:35,601 INFO    SenderThread:1058809 [sender.py:transition_state():612] send defer: 14
+2023-08-11 16:08:35,602 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: defer
+2023-08-11 16:08:35,602 DEBUG   SenderThread:1058809 [sender.py:send():379] send: final
+2023-08-11 16:08:35,602 INFO    HandlerThread:1058809 [handler.py:handle_request_defer():170] handle defer: 14
+2023-08-11 16:08:35,602 DEBUG   SenderThread:1058809 [sender.py:send():379] send: footer
+2023-08-11 16:08:35,603 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: defer
+2023-08-11 16:08:35,603 INFO    SenderThread:1058809 [sender.py:send_request_defer():608] handle sender defer: 14
+2023-08-11 16:08:35,604 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-11 16:08:35,605 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: poll_exit
+2023-08-11 16:08:35,606 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: poll_exit
+2023-08-11 16:08:35,607 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: server_info
+2023-08-11 16:08:35,608 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: poll_exit
+2023-08-11 16:08:35,608 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: get_summary
+2023-08-11 16:08:35,608 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: server_info
+2023-08-11 16:08:35,609 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: sampled_history
+2023-08-11 16:08:35,614 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: job_info
+2023-08-11 16:08:35,742 DEBUG   SenderThread:1058809 [sender.py:send_request():406] send_request: job_info
+2023-08-11 16:08:35,742 INFO    MainThread:1058809 [wandb_run.py:_footer_history_summary_info():3481] rendering history
+2023-08-11 16:08:35,742 INFO    MainThread:1058809 [wandb_run.py:_footer_history_summary_info():3513] rendering summary
+2023-08-11 16:08:35,743 INFO    MainThread:1058809 [wandb_run.py:_footer_sync_info():3440] logging synced files
+2023-08-11 16:08:35,744 DEBUG   HandlerThread:1058809 [handler.py:handle_request():144] handle_request: shutdown
+2023-08-11 16:08:35,744 INFO    HandlerThread:1058809 [handler.py:finish():857] shutting down handler
+2023-08-11 16:08:36,614 INFO    WriterThread:1058809 [datastore.py:close():294] close: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_160827-gefogaq3/run-gefogaq3.wandb
+2023-08-11 16:08:36,742 INFO    SenderThread:1058809 [sender.py:finish():1552] shutting down sender
+2023-08-11 16:08:36,742 INFO    SenderThread:1058809 [file_pusher.py:finish():159] shutting down file pusher
+2023-08-11 16:08:36,742 INFO    SenderThread:1058809 [file_pusher.py:join():164] waiting for file pusher

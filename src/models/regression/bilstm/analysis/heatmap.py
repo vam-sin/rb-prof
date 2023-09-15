@@ -101,11 +101,19 @@ for i in range(len(feature_preds)):
 print(corr_mat)
 
 # make seaborn heatmap from crr_mat
-ax = sns.heatmap(corr_mat, annot=True, xticklabels=feature_names, yticklabels=feature_names, cmap='Blues')
-plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-            rotation_mode="anchor")
-plt.setp(ax.get_yticklabels(), rotation=0, ha="right",
-            rotation_mode="anchor")
+# ax = sns.heatmap(corr_mat, annot=True, xticklabels=feature_names, yticklabels=feature_names, cmap='Blues')
+# plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+#             rotation_mode="anchor")
+# plt.setp(ax.get_yticklabels(), rotation=0, ha="right",
+#             rotation_mode="anchor")
+# sns cluster map
+g = sns.clustermap(corr_mat, annot=True, xticklabels=feature_names, yticklabels=feature_names, figsize=(10, 10))
+g.ax_heatmap.set_xticklabels(g.ax_heatmap.get_xmajorticklabels(), fontsize = 12, rotation=45, ha="right", rotation_mode="anchor")
+g.ax_heatmap.set_yticklabels(g.ax_heatmap.get_ymajorticklabels(), fontsize = 12, rotation=0, ha="left", rotation_mode="anchor")
+# g.ax_heatmap.set_xlabel('Features', fontsize=14)
+# g.ax_heatmap.set_ylabel('Features', fontsize=14)
+# g.ax_heatmap.set_title('Correlation Heatmap of Features', fontsize=16)
+
 plt.tight_layout()
-plt.savefig('ablation_plots/9_ft_corr_heatmap.png', dpi=300)
+plt.savefig('ablation_plots/9_ft_corr_heatmap_clustered.png', dpi=300)
 plt.show()

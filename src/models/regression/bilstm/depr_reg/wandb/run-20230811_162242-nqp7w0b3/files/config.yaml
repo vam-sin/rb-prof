@@ -1,0 +1,69 @@
+wandb_version: 1
+
+learning_rate:
+  desc: null
+  value: 2.0e-05
+weight_decay:
+  desc: null
+  value: 0.01
+architecture:
+  desc: null
+  value: BiLSTM-0
+features:
+  desc: null
+  value: nt_cbert_conds
+dataset:
+  desc: null
+  value: DS06
+epochs:
+  desc: null
+  value: 100
+batch_size:
+  desc: null
+  value: 1
+loss:
+  desc: null
+  value: PCCLoss
+dropout:
+  desc: null
+  value: 0.1
+_wandb:
+  desc: null
+  value:
+    python_version: 3.9.12
+    cli_version: 0.15.8
+    framework: huggingface
+    huggingface_version: 4.26.0
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1691763762.221282
+    t:
+      1:
+      - 1
+      - 2
+      - 3
+      - 5
+      - 11
+      - 12
+      - 49
+      - 53
+      - 55
+      2:
+      - 1
+      - 2
+      - 3
+      - 5
+      - 11
+      - 12
+      - 49
+      - 53
+      - 55
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.9.12
+      5: 0.15.8
+      6: 4.26.0
+      8:
+      - 5

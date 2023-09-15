@@ -1,0 +1,51 @@
+Starting
+Loaded Train
+Loaded Val
+Loaded Test
+[Fri, 11 Aug 2023 16:14:30] INFO [bilstm_reg.py.<module>:204] Train Set:  5704 || Validation Set:   992 || Test Set:  1043
+Device:  cuda
+[Fri, 11 Aug 2023 16:14:35] INFO [bilstm_reg.py.<module>:221] Model Params Total:  7061595
+[Fri, 11 Aug 2023 16:14:35] INFO [bilstm_reg.py.<module>:242] Training Epoch:     1
+[Fri, 11 Aug 2023 16:14:35] INFO [bilstm_reg.py.<module>:244] Learning Rate:  0.0001000000
+Training
+torch.Size([1, 64, 783]) torch.Size([1, 64]) torch.Size([1, 1, 783])
+[Fri, 11 Aug 2023 16:14:35] INFO [model_utils.py.train:289] | samples trained:     1 | train (intermediate) loss: 0.0327570960 | train (intermediate) pr: -0.0327571296 | train (intermediate) sr: 0.1198779489 |
+torch.Size([1, 125, 783]) torch.Size([1, 125]) torch.Size([1, 1, 783])
+torch.Size([1, 778, 783]) torch.Size([1, 778]) torch.Size([1, 1, 783])
+torch.Size([1, 761, 783]) torch.Size([1, 761]) torch.Size([1, 1, 783])
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:76: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:78: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight_ih_l0)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:79: UserWarning: nn.init.orthogonal is now deprecated in favor of nn.init.orthogonal_.
+  torch.nn.init.orthogonal(m.weight_hh_l0)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:80: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight_ih_l0_reverse)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:81: UserWarning: nn.init.orthogonal is now deprecated in favor of nn.init.orthogonal_.
+  torch.nn.init.orthogonal(m.weight_hh_l0_reverse)
+/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py:83: UserWarning: nn.init.xavier_uniform is now deprecated in favor of nn.init.xavier_uniform_.
+  torch.nn.init.xavier_uniform(m.weight)
+torch.Size([1, 120, 783]) torch.Size([1, 120]) torch.Size([1, 1, 783])
+torch.Size([1, 163, 783]) torch.Size([1, 163]) torch.Size([1, 1, 783])
+torch.Size([1, 317, 783]) torch.Size([1, 317]) torch.Size([1, 1, 783])
+torch.Size([1, 146, 783]) torch.Size([1, 146]) torch.Size([1, 1, 783])
+torch.Size([1, 457, 783]) torch.Size([1, 457]) torch.Size([1, 1, 783])
+torch.Size([1, 80, 783]) torch.Size([1, 80]) torch.Size([1, 1, 783])
+torch.Size([1, 1024, 783]) torch.Size([1, 1024]) torch.Size([1, 1, 783])
+torch.Size([1, 266, 783]) torch.Size([1, 266]) torch.Size([1, 1, 783])
+torch.Size([1, 179, 783]) torch.Size([1, 179]) torch.Size([1, 1, 783])
+torch.Size([1, 200, 783]) torch.Size([1, 200]) torch.Size([1, 1, 783])
+torch.Size([1, 157, 783]) torch.Size([1, 157]) torch.Size([1, 1, 783])
+torch.Size([1, 1264, 783]) torch.Size([1, 1264]) torch.Size([1, 1, 783])
+torch.Size([1, 153, 783]) torch.Size([1, 153]) torch.Size([1, 1, 783])
+torch.Size([1, 328, 783]) torch.Size([1, 328]) torch.Size([1, 1, 783])
+Traceback (most recent call last):
+  File "/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py", line 247, in <module>
+    train_loss, train_pr, train_sr =  train(model, train_dataloader, bs, device, criterion, mult_factor, loss_mult_factor, optimizer, logger, epoch, epochs)
+  File "/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/model_utils.py", line 275, in train
+    loss.backward()
+  File "/nfs_home/nallapar/rb-prof/bio_embeds/lib/python3.9/site-packages/torch/_tensor.py", line 255, in backward
+    torch.autograd.backward(self, gradient, retain_graph, create_graph, inputs=inputs)
+  File "/nfs_home/nallapar/rb-prof/bio_embeds/lib/python3.9/site-packages/torch/autograd/__init__.py", line 147, in backward
+    Variable._execution_engine.run_backward(
+KeyboardInterrupt

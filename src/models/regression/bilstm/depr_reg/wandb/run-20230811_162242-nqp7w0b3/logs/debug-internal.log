@@ -1,0 +1,270 @@
+2023-08-11 16:22:42,219 INFO    StreamThr :1063093 [internal.py:wandb_internal():86] W&B internal server running at pid: 1063093, started at: 2023-08-11 16:22:42.217935
+2023-08-11 16:22:42,221 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status
+2023-08-11 16:22:42,229 INFO    WriterThread:1063093 [datastore.py:open_for_write():85] open: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/run-nqp7w0b3.wandb
+2023-08-11 16:22:42,232 DEBUG   SenderThread:1063093 [sender.py:send():379] send: header
+2023-08-11 16:22:42,275 DEBUG   SenderThread:1063093 [sender.py:send():379] send: run
+2023-08-11 16:22:42,686 INFO    SenderThread:1063093 [dir_watcher.py:__init__():211] watching files in: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files
+2023-08-11 16:22:42,686 INFO    SenderThread:1063093 [sender.py:_start_run_threads():1121] run started: nqp7w0b3 with start time 1691763762.221282
+2023-08-11 16:22:42,686 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: summary_record
+2023-08-11 16:22:42,688 INFO    SenderThread:1063093 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-11 16:22:42,690 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: check_version
+2023-08-11 16:22:42,690 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: check_version
+2023-08-11 16:22:42,783 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: run_start
+2023-08-11 16:22:42,805 DEBUG   HandlerThread:1063093 [system_info.py:__init__():31] System info init
+2023-08-11 16:22:42,805 DEBUG   HandlerThread:1063093 [system_info.py:__init__():46] System info init done
+2023-08-11 16:22:42,805 INFO    HandlerThread:1063093 [system_monitor.py:start():181] Starting system monitor
+2023-08-11 16:22:42,805 INFO    SystemMonitor:1063093 [system_monitor.py:_start():145] Starting system asset monitoring threads
+2023-08-11 16:22:42,805 INFO    HandlerThread:1063093 [system_monitor.py:probe():201] Collecting system info
+2023-08-11 16:22:42,807 INFO    SystemMonitor:1063093 [interfaces.py:start():190] Started cpu monitoring
+2023-08-11 16:22:42,808 INFO    SystemMonitor:1063093 [interfaces.py:start():190] Started disk monitoring
+2023-08-11 16:22:42,809 INFO    SystemMonitor:1063093 [interfaces.py:start():190] Started gpu monitoring
+2023-08-11 16:22:42,811 INFO    SystemMonitor:1063093 [interfaces.py:start():190] Started memory monitoring
+2023-08-11 16:22:42,813 INFO    SystemMonitor:1063093 [interfaces.py:start():190] Started network monitoring
+2023-08-11 16:22:42,859 DEBUG   HandlerThread:1063093 [system_info.py:probe():195] Probing system
+2023-08-11 16:22:42,872 DEBUG   HandlerThread:1063093 [system_info.py:_probe_git():180] Probing git
+2023-08-11 16:22:42,906 DEBUG   HandlerThread:1063093 [system_info.py:_probe_git():188] Probing git done
+2023-08-11 16:22:42,906 DEBUG   HandlerThread:1063093 [system_info.py:probe():240] Probing system done
+2023-08-11 16:22:42,906 DEBUG   HandlerThread:1063093 [system_monitor.py:probe():210] {'os': 'Linux-5.4.0-153-generic-x86_64-with-glibc2.31', 'python': '3.9.12', 'heartbeatAt': '2023-08-11T14:22:42.859949', 'startedAt': '2023-08-11T14:22:42.193357', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': '/nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/bilstm_reg.py', 'codePath': 'src/models/regression/bilstm/depr_reg/bilstm_reg.py', 'git': {'remote': 'https://github.com/vam-sin/rb-prof.git', 'commit': '186742dc82d30a10c72ee7125ef8b64b05913659'}, 'email': 'vamsinallapareddy@gmail.com', 'root': '/nfs_home/nallapar/rb-prof', 'host': 'lts2gdk0', 'username': 'nallapar', 'executable': '/nfs_home/nallapar/rb-prof/bio_embeds/bin/python', 'cpu_count': 24, 'cpu_count_logical': 48, 'cpu_freq': {'current': 1257.8110625, 'min': 1200.0, 'max': 2900.0}, 'cpu_freq_per_core': [{'current': 1200.565, 'min': 1200.0, 'max': 2900.0}, {'current': 2200.079, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.141, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.95, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.961, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.835, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.897, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.792, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.749, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.676, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.911, 'min': 1200.0, 'max': 2900.0}, {'current': 1303.549, 'min': 1200.0, 'max': 2900.0}, {'current': 1672.781, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.974, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.971, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.75, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.967, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.717, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.578, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.956, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.678, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.539, 'min': 1200.0, 'max': 2900.0}, {'current': 1203.07, 'min': 1200.0, 'max': 2900.0}, {'current': 1202.88, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.38, 'min': 1200.0, 'max': 2900.0}, {'current': 2200.137, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.869, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.159, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.221, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.821, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.377, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.306, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.051, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.711, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.475, 'min': 1200.0, 'max': 2900.0}, {'current': 1300.361, 'min': 1200.0, 'max': 2900.0}, {'current': 1693.754, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.235, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.734, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.12, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.153, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.763, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.906, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.641, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.811, 'min': 1200.0, 'max': 2900.0}, {'current': 1201.47, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.556, 'min': 1200.0, 'max': 2900.0}, {'current': 1200.907, 'min': 1200.0, 'max': 2900.0}], 'disk': {'total': 36.4654541015625, 'used': 27.63860321044922}, 'gpu': 'NVIDIA GeForce GTX 1080 Ti', 'gpu_count': 1, 'gpu_devices': [{'name': 'NVIDIA GeForce GTX 1080 Ti', 'memory_total': 11721506816}], 'memory': {'total': 220.27867126464844}}
+2023-08-11 16:22:42,907 INFO    HandlerThread:1063093 [system_monitor.py:probe():211] Finished collecting system info
+2023-08-11 16:22:42,907 INFO    HandlerThread:1063093 [system_monitor.py:probe():214] Publishing system info
+2023-08-11 16:22:42,907 DEBUG   HandlerThread:1063093 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-08-11 16:22:42,909 DEBUG   HandlerThread:1063093 [system_info.py:_save_pip():67] Saving pip packages done
+2023-08-11 16:22:42,912 INFO    HandlerThread:1063093 [system_monitor.py:probe():216] Finished publishing system info
+2023-08-11 16:22:42,937 DEBUG   SenderThread:1063093 [sender.py:send():379] send: files
+2023-08-11 16:22:42,937 INFO    SenderThread:1063093 [sender.py:_save_file():1375] saving file wandb-metadata.json with policy now
+2023-08-11 16:22:42,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:22:42,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:22:43,167 DEBUG   SenderThread:1063093 [sender.py:send():379] send: telemetry
+2023-08-11 16:22:43,513 INFO    wandb-upload_0:1063093 [upload_job.py:push():131] Uploaded file /tmp/tmp8nocvgiowandb/kh1gvuc5-wandb-metadata.json
+2023-08-11 16:22:43,690 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/wandb-metadata.json
+2023-08-11 16:22:43,691 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/wandb-summary.json
+2023-08-11 16:22:43,691 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:22:43,691 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_created():271] file/dir created: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/requirements.txt
+2023-08-11 16:22:45,690 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:22:46,834 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: partial_history
+2023-08-11 16:22:46,836 DEBUG   SenderThread:1063093 [sender.py:send():379] send: history
+2023-08-11 16:22:46,836 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: summary_record
+2023-08-11 16:22:46,839 INFO    SenderThread:1063093 [sender.py:_save_file():1375] saving file wandb-summary.json with policy end
+2023-08-11 16:22:47,693 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/wandb-summary.json
+2023-08-11 16:22:47,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:22:49,696 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:22:52,962 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:22:57,958 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:22:57,959 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:22:58,193 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:03,194 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:08,195 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:12,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:23:12,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:23:13,201 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:13,727 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/config.yaml
+2023-08-11 16:23:18,451 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:23,452 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:27,958 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:23:27,959 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:23:29,180 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:29,744 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:23:34,180 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:39,183 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:42,813 DEBUG   SystemMonitor:1063093 [system_monitor.py:_start():159] Starting system metrics aggregation loop
+2023-08-11 16:23:42,816 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:23:42,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:23:42,959 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:23:45,153 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:50,154 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:55,155 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:23:57,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:23:57,959 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:24:01,133 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:06,134 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:09,790 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:24:11,763 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:12,818 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:24:12,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:24:12,959 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:24:17,142 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:22,142 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:27,143 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:27,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:24:27,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:24:32,199 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:37,200 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:42,200 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:42,820 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:24:42,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:24:42,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:24:47,330 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:49,836 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:24:52,332 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:57,333 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:24:57,959 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:24:57,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:25:03,195 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:08,196 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:12,822 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:25:12,960 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:25:12,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:25:14,108 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:19,108 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:24,109 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:27,887 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:25:27,960 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:25:27,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:25:29,155 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:34,156 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:39,161 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:42,833 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:25:42,960 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:25:42,960 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:25:44,175 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:49,175 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:54,176 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:25:57,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:25:57,961 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:26:00,134 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:03,956 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:26:05,995 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:10,997 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:12,835 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:26:12,960 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:26:12,961 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:26:16,197 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:21,197 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:26,198 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:27,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:26:27,961 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:26:31,207 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:36,208 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:41,212 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:42,837 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:26:42,960 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:26:42,961 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:26:44,009 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:26:47,159 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:52,159 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:57,160 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:26:57,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:26:57,961 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:27:03,160 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:08,160 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:12,838 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:27:12,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:27:12,962 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:27:14,117 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:19,118 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:25,084 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:26,058 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:27:27,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:27:27,962 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:27:30,114 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:35,115 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:40,116 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:42,840 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:27:42,961 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:27:42,962 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:27:45,116 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:50,117 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:55,118 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:27:57,962 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:27:57,962 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:28:00,142 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:04,092 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:28:05,292 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:10,291 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:12,847 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:28:12,962 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:28:12,962 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:28:16,176 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:21,177 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:26,178 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:27,962 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:28:27,963 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:28:31,200 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:36,201 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:40,133 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:28:41,862 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:42,849 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:28:42,962 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:28:42,962 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:28:47,215 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:52,216 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:57,217 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:28:57,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:28:57,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:29:03,151 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:08,157 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:12,851 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:29:12,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:29:12,963 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:29:14,125 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:18,174 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:29:19,822 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:24,823 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:27,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:29:27,963 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:29:30,205 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:35,206 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:40,207 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:42,853 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:29:42,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:29:42,963 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:29:46,186 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:51,187 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:56,187 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:29:57,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:29:57,963 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:30:02,127 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:06,233 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:30:07,194 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:12,194 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:12,856 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:30:12,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:30:12,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:30:17,206 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:22,207 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:27,208 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:27,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:30:27,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:30:33,182 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:38,183 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:42,859 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:30:42,964 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:30:42,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:30:43,517 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:44,280 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:30:48,520 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:53,521 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:30:57,963 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:30:57,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:30:59,188 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:04,191 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:09,192 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:12,860 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:31:12,964 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:31:12,964 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:31:14,200 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:19,201 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:24,202 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:26,334 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:31:27,964 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:31:27,965 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:31:30,137 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:35,139 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:40,140 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:42,862 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:31:42,964 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:31:42,965 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:31:45,154 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:50,155 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:55,156 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:31:57,964 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:31:57,965 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:32:00,194 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:32:06,032 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:32:06,397 INFO    Thread-12 :1063093 [dir_watcher.py:_on_file_modified():288] file/dir modified: /nfs_home/nallapar/rb-prof/src/models/regression/bilstm/depr_reg/wandb/run-20230811_162242-nqp7w0b3/files/output.log
+2023-08-11 16:32:11,032 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:32:12,863 DEBUG   SenderThread:1063093 [sender.py:send():379] send: stats
+2023-08-11 16:32:12,965 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: stop_status
+2023-08-11 16:32:12,965 DEBUG   SenderThread:1063093 [sender.py:send_request():406] send_request: stop_status
+2023-08-11 16:32:16,120 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report
+2023-08-11 16:32:21,122 DEBUG   HandlerThread:1063093 [handler.py:handle_request():144] handle_request: status_report

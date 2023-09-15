@@ -21,7 +21,7 @@ import logging
 import pickle as pkl
 from torch.utils.data import Dataset, DataLoader
 
-saved_files_name = 'bl_bs1_noNorm_orig_GWS_dr01_15Chunks'
+saved_files_name = 'B-0-DS06-NT_CBERT-BS1-PCCLoss'
 log_file_name = 'logs/' + saved_files_name + '.log'
 model_file_name = 'reg_models/' + saved_files_name + '.pt'
 # more_model_file_name = 'reg_models/' + saved_files_name + '_MORE.pt'
@@ -108,14 +108,14 @@ if __name__ == '__main__':
     # device = torch.device('cpu')
     print("Device: ", device)
 
-    input_dim = 804
+    input_dim = 805
     embedding_dim = 64
     hidden_dim = 256
     output_dim = 1
     n_layers = 4
     bidirectional = True
     dropout = 0.1
-    model = BiLSTMModel(input_dim, embedding_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout, bs).to(device)
+    model = BiLSTMModel(input_dim, hidden_dim, output_dim, n_layers, bidirectional, dropout, bs).to(device)
     model = model.to(torch.float)
     # model.apply(init_weights)
     pytorch_total_params = sum(p.numel() for p in model.parameters())
