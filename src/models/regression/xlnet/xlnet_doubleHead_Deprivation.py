@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd 
 import torch
 from transformers import XLNetConfig, XLNetForTokenClassification
-from model_utils_pel_depr_doubleheads import RegressionTrainer, RiboDatasetGWS, GWSDatasetFromPandas  # custom dataset and trainer
+from utils_doubleHead_Deprivation import RegressionTrainer, RiboDatasetGWS, GWSDatasetFromPandas  # custom dataset and trainer
 from transformers import TrainingArguments
 import random
 from torch.nn.utils.rnn import pad_sequence
@@ -20,12 +20,13 @@ random.seed(42)
 np.random.seed(42)
 torch.manual_seed(42)
 
+# dataset paths 
 ribo_data_gws = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/liver_na_84.csv'
 depr_folder = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/'
 model_name = 'XLNetDepr-3_256_8-TrueALLWithLIVER_Standard-PEL-BS1-TrueGWS_PCC_IndTokens384_doubleheads_3Loss_NonZero20_PercNansThresh0.05'
 
 # GWS dataset
-ds = 'ALL'
+ds = 'ALL' # this uses both liver and deprivation datasets all the conditions
 train_dataset, test_dataset = RiboDatasetGWS(ribo_data_gws, depr_folder, ds, threshold=0.3, longZerosThresh=20, percNansThresh=0.05)
 
 # convert to torch dataset
@@ -102,6 +103,9 @@ def compute_metrics(pred):
 
 # compute metrics
 def compute_metrics_saved(pred):
+    '''
+    additional function to just save everything to do analysis later
+    '''
     labels = pred.label_ids 
     preds = pred.predictions
     inputs = pred.inputs
@@ -154,7 +158,7 @@ trainer = RegressionTrainer(
     train_dataset=train_dataset,
     eval_dataset=test_dataset,
     data_collator=collate_fn,
-    compute_metrics=compute_metrics_saved,
+    compute_metrics=compute_metrics,
 )
 
 trainer.train()

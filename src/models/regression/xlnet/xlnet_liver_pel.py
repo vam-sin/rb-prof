@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd 
 import torch
 from transformers import XLNetConfig, XLNetForTokenClassification
-from model_utils_pel import RegressionTrainer, RiboDatasetGWS, GWSDatasetFromPandas  # custom dataset and trainer
+from utils_control import RegressionTrainer, RiboDatasetGWS, GWSDatasetFromPandas  # custom dataset and trainer
 from transformers import TrainingArguments
 import random
 from torch.nn.utils.rnn import pad_sequence
@@ -21,12 +21,13 @@ random.seed(42)
 np.random.seed(42)
 torch.manual_seed(42)
 
+# dataset paths
 ribo_path = '/nfs_home/craigher/scratch/translation_proj/data/liver'
 ribo_data_gws = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/liver.csv'
 depr_ctrl_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/CTRL.csv'
 
 # GWS dataset
-ds = 'Liver_DeprCTRL'
+ds = 'Liver_DeprCTRL' # Liver_DeprCTRL (liver and deprivation control), Liver (only liver), DeprCTRL (only deprivation control)
 train_dataset, test_dataset = RiboDatasetGWS(ribo_data_gws, depr_ctrl_path, ds, threshold=0.3)
 # convert to torch dataset
 train_dataset = GWSDatasetFromPandas(train_dataset)

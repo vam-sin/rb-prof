@@ -16,6 +16,9 @@ id_to_codon = {idx:''.join(el) for idx, el in enumerate(itertools.product(['A', 
 codon_to_id = {v:k for k,v in id_to_codon.items()}
 
 def longestZeroSeqLength(a):
+    '''
+    longest zero length sequence
+    '''
     a = a[1:-1].split(', ')
     # print(a)
     a = [float(k) for k in a]
@@ -31,6 +34,9 @@ def longestZeroSeqLength(a):
     return longest
 
 def percNans(a):
+    '''
+    percentage of nans
+    '''
     a = a[1:-1].split(', ')
     a = [float(k) for k in a]
     a = np.asarray(a)
@@ -40,133 +46,133 @@ def percNans(a):
 
 def RiboDatasetGWS(ribo_data_dirpath: str, depr_folder: str, ds: str, threshold: float = 0.6, longZerosThresh: int = 20, percNansThresh: float = 0.1):
     if ds == 'ALL':
-        # # paths 
-        # ctrl_depr_path = depr_folder + 'CTRL.csv'
-        # ile_path = depr_folder + 'ILE.csv'
-        # leu_path = depr_folder + 'LEU.csv'
-        # val_path = depr_folder + 'VAL.csv'
-        # leu_ile_path = depr_folder + 'LEU_ILE.csv'
-        # leu_ile_val_path = depr_folder + 'LEU_ILE_VAL.csv'
+        # paths 
+        ctrl_depr_path = depr_folder + 'CTRL.csv'
+        ile_path = depr_folder + 'ILE.csv'
+        leu_path = depr_folder + 'LEU.csv'
+        val_path = depr_folder + 'VAL.csv'
+        leu_ile_path = depr_folder + 'LEU_ILE.csv'
+        leu_ile_val_path = depr_folder + 'LEU_ILE_VAL.csv'
 
-        # # load the control data
-        # df_liver = pd.read_csv(ribo_data_dirpath)
-        # df_liver['condition'] = 'CTRL'
-        # df_ctrl_depr = pd.read_csv(ctrl_depr_path)
+        # load the control data
+        df_liver = pd.read_csv(ribo_data_dirpath)
+        df_liver['condition'] = 'CTRL'
+        df_ctrl_depr = pd.read_csv(ctrl_depr_path)
 
-        # # add to the liver data the genes from ctrl depr which are not in liver
-        # genes_liver = df_liver['gene'].unique()
-        # genes_ctrl_depr = df_ctrl_depr['gene'].unique()
-        # genes_to_add = [gene for gene in genes_liver if gene not in genes_ctrl_depr]
+        # add to the liver data the genes from ctrl depr which are not in liver
+        genes_liver = df_liver['gene'].unique()
+        genes_ctrl_depr = df_ctrl_depr['gene'].unique()
+        genes_to_add = [gene for gene in genes_liver if gene not in genes_ctrl_depr]
 
-        # df_liver = df_liver[df_liver['gene'].isin(genes_to_add)]
+        df_liver = df_liver[df_liver['gene'].isin(genes_to_add)]
 
-        # df_ctrl_depr['condition'] = 'CTRL'
+        df_ctrl_depr['condition'] = 'CTRL'
 
-        # # df ctrldep + liver
-        # df_ctrldepr_liver = pd.concat([df_liver, df_ctrl_depr], axis=0)
+        # df ctrldep + liver
+        df_ctrldepr_liver = pd.concat([df_liver, df_ctrl_depr], axis=0)
 
-        # # check if there are any duplicates in transcript column of the df
-        # # print(len(df_ctrldepr_liver['transcript'].unique()), len(df_ctrldepr_liver['transcript']))
-        # assert len(df_ctrldepr_liver['transcript'].unique()) == len(df_ctrldepr_liver['transcript'])
+        # check if there are any duplicates in transcript column of the df
+        # print(len(df_ctrldepr_liver['transcript'].unique()), len(df_ctrldepr_liver['transcript']))
+        assert len(df_ctrldepr_liver['transcript'].unique()) == len(df_ctrldepr_liver['transcript'])
 
-        # # other dataset
-        # df_ile = pd.read_csv(ile_path)
-        # df_ile['condition'] = 'ILE'
-        # df_leu = pd.read_csv(leu_path)
-        # df_leu['condition'] = 'LEU'
-        # df_val = pd.read_csv(val_path)
-        # df_val['condition'] = 'VAL'
-        # df_leu_ile = pd.read_csv(leu_ile_path)
-        # df_leu_ile['condition'] = 'LEU_ILE'
-        # df_leu_ile_val = pd.read_csv(leu_ile_val_path)
-        # df_leu_ile_val['condition'] = 'LEU_ILE_VAL'
+        # other dataset
+        df_ile = pd.read_csv(ile_path)
+        df_ile['condition'] = 'ILE'
+        df_leu = pd.read_csv(leu_path)
+        df_leu['condition'] = 'LEU'
+        df_val = pd.read_csv(val_path)
+        df_val['condition'] = 'VAL'
+        df_leu_ile = pd.read_csv(leu_ile_path)
+        df_leu_ile['condition'] = 'LEU_ILE'
+        df_leu_ile_val = pd.read_csv(leu_ile_val_path)
+        df_leu_ile_val['condition'] = 'LEU_ILE_VAL'
 
-        # df_full = pd.concat([df_liver, df_ctrl_depr, df_ile, df_leu, df_val, df_leu_ile, df_leu_ile_val], axis=0) # liver + ctrl depr + ile + leu + val + leu ile + leu ile val
+        df_full = pd.concat([df_liver, df_ctrl_depr, df_ile, df_leu, df_val, df_leu_ile, df_leu_ile_val], axis=0) # liver + ctrl depr + ile + leu + val + leu ile + leu ile val
 
-        # df_full.columns = ['gene', 'transcript', 'sequence', 'annotations', 'perc_non_zero_annots', 'condition']
+        df_full.columns = ['gene', 'transcript', 'sequence', 'annotations', 'perc_non_zero_annots', 'condition']
 
-        # # apply annot threshold
-        # df_full = df_full[df_full['perc_non_zero_annots'] >= threshold]
+        # apply annot threshold
+        df_full = df_full[df_full['perc_non_zero_annots'] >= threshold]
 
-        # # for all the sequences in a condition that is not CTRL, add their respective CTRL sequence to them
-        # sequences_ctrl = []
-        # annotations_list = list(df_full['annotations'])
-        # condition_df_list = list(df_full['condition'])
-        # transcripts_list = list(df_full['transcript'])
+        # for all the sequences in a condition that is not CTRL, add their respective CTRL sequence to them
+        sequences_ctrl = []
+        annotations_list = list(df_full['annotations'])
+        condition_df_list = list(df_full['condition'])
+        transcripts_list = list(df_full['transcript'])
 
-        # for i in range(len(condition_df_list)):
-        #     try:
-        #         if condition_df_list != 'CTRL':
-        #             # find the respective CTRL sequence for the transcript
-        #             ctrl_sequence = df_full[(df_full['transcript'] == transcripts_list[i]) & (df_full['condition'] == 'CTRL')]['annotations'].iloc[0]
-        #             sequences_ctrl.append(ctrl_sequence)
-        #         else:
-        #             sequences_ctrl.append(annotations_list[i])
-        #     except:
-        #         sequences_ctrl.append('NA')
+        for i in range(len(condition_df_list)):
+            try:
+                if condition_df_list != 'CTRL':
+                    # find the respective CTRL sequence for the transcript
+                    ctrl_sequence = df_full[(df_full['transcript'] == transcripts_list[i]) & (df_full['condition'] == 'CTRL')]['annotations'].iloc[0]
+                    sequences_ctrl.append(ctrl_sequence)
+                else:
+                    sequences_ctrl.append(annotations_list[i])
+            except:
+                sequences_ctrl.append('NA')
 
-        # # add the sequences_ctrl to the df
-        # print(len(sequences_ctrl), len(annotations_list))
-        # df_full['ctrl_sequence'] = sequences_ctrl
+        # add the sequences_ctrl to the df
+        print(len(sequences_ctrl), len(annotations_list))
+        df_full['ctrl_sequence'] = sequences_ctrl
 
-        # # remove those rows where the ctrl_sequence is NA
-        # df_full = df_full[df_full['ctrl_sequence'] != 'NA']
+        # remove those rows where the ctrl_sequence is NA
+        df_full = df_full[df_full['ctrl_sequence'] != 'NA']
 
-        # # sanity check for the ctrl sequences
-        # # get the ds with only condition as CTRL
-        # df_ctrl_full = df_full[df_full['condition'] == 'CTRL']
-        # ctrl_sequences_san = list(df_ctrl_full['annotations'])
-        # ctrl_sequences_san2 = list(df_ctrl_full['ctrl_sequence'])
+        # sanity check for the ctrl sequences
+        # get the ds with only condition as CTRL
+        df_ctrl_full = df_full[df_full['condition'] == 'CTRL']
+        ctrl_sequences_san = list(df_ctrl_full['annotations'])
+        ctrl_sequences_san2 = list(df_ctrl_full['ctrl_sequence'])
 
-        # for i in range(len(ctrl_sequences_san)):
-        #     assert ctrl_sequences_san[i] == ctrl_sequences_san2[i]
+        for i in range(len(ctrl_sequences_san)):
+            assert ctrl_sequences_san[i] == ctrl_sequences_san2[i]
 
-        # print("Sanity Checked")
+        print("Sanity Checked")
 
-        # # get longest zero sequence length for each sequence in annotations and ctrl_sequence
-        # annotations_list = list(df_full['annotations'])
-        # sequences_ctrl = list(df_full['ctrl_sequence'])
-        # annotation_long_zeros = []
-        # ctrl_sequence_long_zeros = []
-        # num_nans_full = []
-        # num_nans_ctrl = []
-        # for i in range(len(annotations_list)):
-        #     annotation_long_zeros.append(longestZeroSeqLength(annotations_list[i]))
-        #     ctrl_sequence_long_zeros.append(longestZeroSeqLength(sequences_ctrl[i]))
-        #     num_nans_full.append(percNans(annotations_list[i]))
-        #     num_nans_ctrl.append(percNans(sequences_ctrl[i]))
+        # get longest zero sequence length for each sequence in annotations and ctrl_sequence
+        annotations_list = list(df_full['annotations'])
+        sequences_ctrl = list(df_full['ctrl_sequence'])
+        annotation_long_zeros = []
+        ctrl_sequence_long_zeros = []
+        num_nans_full = []
+        num_nans_ctrl = []
+        for i in range(len(annotations_list)):
+            annotation_long_zeros.append(longestZeroSeqLength(annotations_list[i]))
+            ctrl_sequence_long_zeros.append(longestZeroSeqLength(sequences_ctrl[i]))
+            num_nans_full.append(percNans(annotations_list[i]))
+            num_nans_ctrl.append(percNans(sequences_ctrl[i]))
 
-        # # add the longest zero sequence length to the df
-        # df_full['longest_zero_seq_length_annotation'] = annotation_long_zeros
-        # df_full['longest_zero_seq_length_ctrl_sequence'] = ctrl_sequence_long_zeros
+        # add the longest zero sequence length to the df
+        df_full['longest_zero_seq_length_annotation'] = annotation_long_zeros
+        df_full['longest_zero_seq_length_ctrl_sequence'] = ctrl_sequence_long_zeros
 
-        # # add the number of nans to the df
-        # df_full['perc_nans_annotation'] = num_nans_full
-        # df_full['perc_nans_ctrl_sequence'] = num_nans_ctrl
+        # add the number of nans to the df
+        df_full['perc_nans_annotation'] = num_nans_full
+        df_full['perc_nans_ctrl_sequence'] = num_nans_ctrl
 
-        # # apply the threshold for the longest zero sequence length
-        # df_full = df_full[df_full['longest_zero_seq_length_annotation'] <= longZerosThresh]
-        # df_full = df_full[df_full['longest_zero_seq_length_ctrl_sequence'] <= longZerosThresh]
+        # apply the threshold for the longest zero sequence length
+        df_full = df_full[df_full['longest_zero_seq_length_annotation'] <= longZerosThresh]
+        df_full = df_full[df_full['longest_zero_seq_length_ctrl_sequence'] <= longZerosThresh]
 
-        # # apply the threshold for the number of nans
-        # df_full = df_full[df_full['perc_nans_annotation'] <= percNansThresh]
-        # df_full = df_full[df_full['perc_nans_ctrl_sequence'] <= percNansThresh]
+        # apply the threshold for the number of nans
+        df_full = df_full[df_full['perc_nans_annotation'] <= percNansThresh]
+        df_full = df_full[df_full['perc_nans_ctrl_sequence'] <= percNansThresh]
 
-        # print(df_full)
+        print(df_full)
 
-        # # GWS
-        # genes = df_full['gene'].unique()
-        # genes_train, genes_test = train_test_split(genes, test_size=0.2, random_state=42)
+        # GWS
+        genes = df_full['gene'].unique()
+        genes_train, genes_test = train_test_split(genes, test_size=0.2, random_state=42)
 
-        # # split the dataframe
-        # df_train = df_full[df_full['gene'].isin(genes_train)]
-        # df_test = df_full[df_full['gene'].isin(genes_test)]
+        # split the dataframe
+        df_train = df_full[df_full['gene'].isin(genes_train)]
+        df_test = df_full[df_full['gene'].isin(genes_test)]
 
         out_train_path = 'data/ribo_train_ALL_dh_' + str(threshold) + '_NZ_' + str(longZerosThresh) + '_PercNan_' + str(percNansThresh) + '.csv'
         out_test_path = 'data/ribo_test_ALL_dh_' + str(threshold) + '_NZ_' + str(longZerosThresh) + '_PercNan_' + str(percNansThresh) + '.csv'
 
-        # df_train.to_csv(out_train_path, index=False)
-        # df_test.to_csv(out_test_path, index=False)
+        df_train.to_csv(out_train_path, index=False)
+        df_test.to_csv(out_test_path, index=False)
 
         df_train = pd.read_csv(out_train_path)
         df_test = pd.read_csv(out_test_path)

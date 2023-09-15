@@ -1,7 +1,6 @@
 '''
 Liver + DeprCTRL Utils
 '''
-
 # libraries
 import os
 import pandas as pd 
@@ -21,7 +20,10 @@ import pywt
 from sklearn.model_selection import train_test_split
 
 def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, threshold: float = 0.6):
-    if ds == 'Liver':
+    '''
+    Dataset generation function
+    '''
+    if ds == 'Liver': # only liver control data
         # liver data
         df_liver = pd.read_csv(ribo_data_dirpath)
 
@@ -37,7 +39,7 @@ def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, thresho
         return df_train, df_test
 
 
-    elif ds == 'DeprCTRL':
+    elif ds == 'DeprCTRL': # only control from deprivation
         # ctrl depr data
         df_ctrl_depr = pd.read_csv(ctrl_depr_path)
         # drop transcript column
@@ -46,6 +48,7 @@ def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, thresho
         # apply annot threshold
         df_full = df_ctrl_depr[df_ctrl_depr['perc_non_zero_annots'] >= threshold]
 
+        # gene wise split
         genes = df_full['gene'].unique()
         genes_train, genes_test = train_test_split(genes, test_size=0.2, random_state=42)
 
@@ -58,7 +61,7 @@ def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, thresho
 
         return df_train, df_test
 
-    elif ds == 'Liver_DeprCTRL':
+    elif ds == 'Liver_DeprCTRL': # both liver and ctrl from deprivation
         df_liver = pd.read_csv(ribo_data_dirpath)
         df_ctrl_depr = pd.read_csv(ctrl_depr_path)
 
@@ -75,6 +78,7 @@ def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, thresho
         # apply annot threshold
         df_full = df_full[df_full['perc_non_zero_annots'] >= threshold]
 
+        # gene wise split
         genes = df_full['gene'].unique()
         genes_train, genes_test = train_test_split(genes, test_size=0.2, random_state=42)
 
@@ -82,12 +86,16 @@ def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, thresho
         df_train = df_full[df_full['gene'].isin(genes_train)]
         df_test = df_full[df_full['gene'].isin(genes_test)]
 
+        # saves these to file
         df_train.to_csv('data/ribo_train_liver_deprctrl.csv', index=False)
         df_test.to_csv('data/ribo_test_liver_deprctrl.csv', index=False)
 
         return df_train, df_test
 
 class GWSDatasetFromPandas(Dataset):
+    '''
+    converts dataset from pandas dataframe to pytorch dataset
+    '''
     def __init__(self, df):
         self.df = df
         self.counts = list(self.df['annotations'])
