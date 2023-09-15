@@ -1,3 +1,7 @@
+'''
+CTRL only models
+'''
+
 # libraries
 import numpy as np
 import pandas as pd 
