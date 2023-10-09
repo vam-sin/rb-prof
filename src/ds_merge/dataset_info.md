@@ -1,24 +1,25 @@
 # Datasets 
 
-## DS06 AA Deprivation Samples (Naef Lab)
+## AA Deprivation Samples (Naef Lab)
 
 Has 6 amino acid conditions (5 deprivations + 1 CTRL)
-Threshold: 60%
 organism: mus musculus
 
-Total: 7740 (3827 CTRL)
+CTRL: 16,750
+ILE: 15,850
+LEU: 15,630
+LEU-ILE: 14,601 (prop only combines replicates 1, and 2. The other files combines all 3 replicates but turns out the third file is a little weird so it is best to discard that)
+VAL: 12,340
+LEU-ILE-VAL: 12,629
 
-train_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/train' - 5704 (2493 CTRL)
-val_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/val' - 992 (392 CTRL)
-test_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/test' - 1044 (402 CTRL)
+paths = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full'
 
 ## Mouse Liver Samples (Naef Lab)
 
-Threshold: 60%
 organism: mus musculus
-7012 samples (all CTRL)
+22363 samples (all CTRL)
 
-path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/processed_full_proper/final/liver_06_sequence'
+path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full'
 
 ## RiboMIMO Samples
 

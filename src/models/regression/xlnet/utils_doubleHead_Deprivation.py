@@ -17,10 +17,9 @@ codon_to_id = {v:k for k,v in id_to_codon.items()}
 
 def longestZeroSeqLength(a):
     '''
-    longest zero length sequence
+    length of the longest sub-sequence of zeros
     '''
     a = a[1:-1].split(', ')
-    # print(a)
     a = [float(k) for k in a]
     # longest sequence of zeros
     longest = 0
@@ -35,7 +34,7 @@ def longestZeroSeqLength(a):
 
 def percNans(a):
     '''
-    percentage of nans
+    returns the percentage of nans in the sequence
     '''
     a = a[1:-1].split(', ')
     a = [float(k) for k in a]
@@ -51,7 +50,7 @@ def RiboDatasetGWS(ribo_data_dirpath: str, depr_folder: str, ds: str, threshold:
         ile_path = depr_folder + 'ILE.csv'
         leu_path = depr_folder + 'LEU.csv'
         val_path = depr_folder + 'VAL.csv'
-        leu_ile_path = depr_folder + 'LEU_ILE.csv'
+        leu_ile_path = depr_folder + 'LEU_ILE_prop.csv'
         leu_ile_val_path = depr_folder + 'LEU_ILE_VAL.csv'
 
         # load the control data
@@ -72,7 +71,6 @@ def RiboDatasetGWS(ribo_data_dirpath: str, depr_folder: str, ds: str, threshold:
         df_ctrldepr_liver = pd.concat([df_liver, df_ctrl_depr], axis=0)
 
         # check if there are any duplicates in transcript column of the df
-        # print(len(df_ctrldepr_liver['transcript'].unique()), len(df_ctrldepr_liver['transcript']))
         assert len(df_ctrldepr_liver['transcript'].unique()) == len(df_ctrldepr_liver['transcript'])
 
         # other dataset
@@ -346,8 +344,6 @@ class RegressionTrainer(Trainer):
         
         mask = torch.arange(labels.shape[1])[None, :].to(lengths) < lengths[:, None]
         mask = torch.logical_and(mask, torch.logical_not(torch.isnan(labels)))
-        
-        # loss = loss_fnc(logits, labels, mask, self.state.epoch)
         
         loss = loss_fnc(logits, labels, labels_ctrl, mask)
 

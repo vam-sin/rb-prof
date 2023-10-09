@@ -119,10 +119,10 @@ def make_all_dataframes(
 
 if __name__ == '__main__': 
     fa_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr/ensembl.cds.fa'
-    data_dir_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr/LEU_ILE_VAL/'
+    data_dir_path = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr/LEU_ILE_prop/'
 
     dfs = make_all_dataframes(data_dir_path, fa_path)
 
     print(dfs)
 
-    dfs.to_csv('/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/raw/LEU_ILE_VAL.csv')
+    dfs.to_csv('/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/raw/LEU_ILE_prop.csv')

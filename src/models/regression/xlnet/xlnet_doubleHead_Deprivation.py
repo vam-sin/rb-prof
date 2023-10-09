@@ -23,7 +23,7 @@ torch.manual_seed(42)
 # dataset paths 
 ribo_data_gws = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/liver_na_84.csv'
 depr_folder = '/net/lts2gdk0/mnt/scratch/lts2/nallapar/rb-prof/data/rb_prof_Naef/AA_depr_full/'
-model_name = 'XLNetDepr-3_256_8-TrueALLWithLIVER_Standard-PEL-BS1-TrueGWS_PCC_IndTokens384_doubleheads_3Loss_NonZero20_PercNansThresh0.05'
+model_name = 'XLNetDepr-3_256_8-TrueALLWithLIVER_Standard-PEL-BS1-TrueGWS_PCC_IndTokens384_doubleheads_3Loss_NonZero20_PercNansThresh0.05_fixedLEU_ILE'
 
 # GWS dataset
 ds = 'ALL' # this uses both liver and deprivation datasets all the conditions

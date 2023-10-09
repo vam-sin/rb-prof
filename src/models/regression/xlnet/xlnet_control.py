@@ -1,5 +1,5 @@
 '''
-CTRL only models
+model trained on only the CTRL samples
 '''
 
 # libraries
@@ -52,8 +52,7 @@ class CorrCoef(Metric):
         self.add_state("corrcoefs", default=torch.tensor(0.0), dist_reduce_fx="sum")
         self.add_state("total", default=torch.tensor(0.0), dist_reduce_fx="sum")
     def update(self, preds, target, mask):
-        # print("preds shape: ", preds.shape)
-        # sum preds in dim 2 
+        # sum preds in dim 2
         preds = torch.sum(preds, dim=2)
         assert preds.shape == target.shape
         assert preds.shape == mask.shape

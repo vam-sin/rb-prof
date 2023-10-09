@@ -1,27 +1,21 @@
 '''
-Liver + DeprCTRL Utils
+Control Utils
 '''
 # libraries
-import os
 import pandas as pd 
 import numpy as np
 import torch
-import math
 import torch.nn as nn
 from torch.utils.data import Dataset
-import csv
 from transformers import Trainer
-from torchmetrics import PearsonCorrCoef
-import itertools
-import pickle as pkl
-from torch.autograd import Variable
-import h5py
 import pywt
 from sklearn.model_selection import train_test_split
 
 def RiboDatasetGWS(ribo_data_dirpath: str, ctrl_depr_path: str, ds: str, threshold: float = 0.6):
     '''
     Dataset generation function
+    choose between Liver, DeprCTRL, Liver_DeprCTRL
+    Liver_DeprCTRL is the combination of both Liver and CTRL samples from the deprivation dataset
     '''
     if ds == 'Liver': # only liver control data
         # liver data
@@ -115,8 +109,8 @@ class GWSDatasetFromPandas(Dataset):
         y = y[1:-1].split(', ')
         y = [float(i) for i in y]
 
-        # do min max scaling
-        # y = [(i - min(y)) / (max(y) - min(y)) for i in y] # DO NOT MIN MAX SCALE
+        # min max scaling (Do not do this, this reduces the performance)
+        # y = [(i - min(y)) / (max(y) - min(y)) for i in y]
         # log transform y
         # add 1 to avoid log(0)
         y = [1+i for i in y]
@@ -214,8 +208,6 @@ class MaskedMSELoss(nn.Module):
         y_pred_mask = torch.masked_select(y_pred, mask).float()
         y_true_mask = torch.masked_select(y_true, mask).float()
 
-        # print(y_pred_mask, y_true_mask)
-
         loss = nn.functional.mse_loss(y_pred_mask, y_true_mask, reduction="none")
         return torch.sqrt(loss.mean())
 
@@ -258,8 +250,6 @@ class MaskedCombinedPearsonMSELossWavelet(nn.Module):
 
         pearson_full = self.pearson(full_pred, idwt_y, mask, eps=eps)
 
-        # print(mse_details, pearson_approx, pearson_full)
-
         return l1_details + pearson_approx + pearson_full
 
 class RegressionTrainer(Trainer):
@@ -274,21 +264,12 @@ class RegressionTrainer(Trainer):
         logits = torch.squeeze(logits, dim=2)
         lengths = inputs['lengths']
 
-        # loss_fnc = MaskedCombinedPearsonLoss()
-
-        # loss_fnc = MaskedPearsonLoss()
-
         loss_fnc = MaskedCombinedPearsonMSELossWavelet()
         
         mask = torch.arange(logits.shape[1])[None, :].to(lengths) < lengths[:, None]
         mask = torch.logical_and(mask, torch.logical_not(torch.isnan(labels)))
-        
-        # loss = loss_fnc(logits, labels, mask, self.state.epoch)
-        
-        # loss = loss_fnc(logits, labels, mask)
 
         # pywt loss
-        # print("logits", logits)
         loss = loss_fnc(logits, approx_labels, details_labels, idwt_y, labels, mask)
 
         return (loss, outputs) if return_outputs else loss 
